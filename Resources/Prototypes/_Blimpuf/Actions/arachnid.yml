@@ -1,0 +1,11 @@
+- type: entity
+  parent: BaseAction
+  id: ActionWebGrapple
+  name: Web Grapple
+  description: Shoot a grapple hook of Web
+  components:
+  - type: Action
+    icon: { sprite: _Blimpuf/WebGrapple/abilties.rsi, state: WebGrappleIcon }
+    useDelay: 1
+  - type: InstantAction
+    event: !type:ActionWebGrapple
