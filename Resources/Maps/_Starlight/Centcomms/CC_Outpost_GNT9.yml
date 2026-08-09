@@ -6,8 +6,7 @@ meta:
   forkVersion: ""
   time: 08/08/2026 22:41:22
   entityCount: 8701
-maps:
-- 430
+maps: []
 grids:
 - 1
 orphans:
@@ -60,7 +59,7 @@ entities:
       name: Central Command GNT-9
     - type: Transform
       pos: -0.53125,-0.5
-      parent: 430
+      parent: invalid
     - type: MapGrid
       chunks:
         0,0:
@@ -3942,16 +3941,6 @@ entities:
     - type: ImplicitRoof
     - type: NavMap
     - type: ExplosionAirtightGrid
-  - uid: 430
-    components:
-    - type: MetaData
-      name: Map Entity
-    - type: Transform
-    - type: Map
-      mapPaused: True
-    - type: GridTree
-    - type: Broadphase
-    - type: OccluderTree
 - proto: AccessConfigurator
   entities:
   - uid: 3

@@ -6,8 +6,7 @@ meta:
   forkVersion: ""
   time: 08/08/2026 22:48:29
   entityCount: 9800
-maps:
-- 375
+maps: []
 grids:
 - 1
 orphans:
@@ -49,7 +48,7 @@ entities:
       name: Central Command SC17
     - type: Transform
       pos: -0.7851671,-0.8700492
-      parent: 375
+      parent: invalid
     - type: MapGrid
       chunks:
         0,0:
@@ -4190,16 +4189,6 @@ entities:
     - type: ImplicitRoof
     - type: NavMap
     - type: ExplosionAirtightGrid
-  - uid: 375
-    components:
-    - type: MetaData
-      name: Map Entity
-    - type: Transform
-    - type: Map
-      mapPaused: True
-    - type: GridTree
-    - type: Broadphase
-    - type: OccluderTree
 - proto: AdvMopItem
   entities:
   - uid: 2
