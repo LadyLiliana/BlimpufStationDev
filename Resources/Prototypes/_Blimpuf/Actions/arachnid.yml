@@ -1,3 +1,4 @@
+# For Testing a different method of doing this:
 - type: entity
   parent: BaseAction
   id: ActionWebGrapple
@@ -7,5 +8,62 @@
   - type: Action
     icon: { sprite: _Blimpuf/WebGrapple/abilties.rsi, state: WebGrappleIcon }
     useDelay: 1
-  - type: InstantAction
+  - type: TargetAction
+    checkCanAccess: false
+    range: 0
+  - type: WorldTargetAction
     event: !type:ActionWebGrapple
+
+# Using the ActionGun Component instead of unique Action Component
+- type: entity
+  parent: BaseAction
+  id: ActionWebGrappleGun
+  name: Web Grapple
+  description: Shoot a grapple hook of Web
+  components:
+  - type: Action
+    icon: { sprite: _Blimpuf/WebGrapple/abilties.rsi, state: WebGrappleIcon }
+    itemIconStyle: BigAction
+    priority: 2
+  - type: TargetAction
+    checkCanAccess: false
+    range: 0
+  - type: WorldTargetAction
+    event: !type:ActionGunShootEvent
+  - type: EorgPreventAction # Starlight
+
+
+
+- type: entity
+  name: web grappling gun
+  #parent: BaseItem
+  id: WeaponWebGrapplingGun
+  components:
+    - type: GrapplingGun
+      ropeSprite:
+        sprite: _Blimpuf/WebGrapple/webgrapple.rsi
+        state: rope
+    - type: Gun
+      soundGunshot: /Audio/Weapons/Guns/Gunshots/harpoon.ogg
+      fireRate: 0.5
+      clumsyProof: true
+    - type: BasicEntityAmmoProvider
+      proto: WebGrapplingHook
+      capacity: 1
+#    - type: UseDelay
+#      delay: 1.5
+    - type: PacifismAllowedGun
+
+- type: entity
+  parent: GrapplingHook
+  id: WebGrapplingHook
+  name: web projectile
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    noRot: false
+    sprite: _Blimpuf/WebGrapple/webgrapple.rsi
+    layers:
+    - state: hook
+  - type: Ammo
+    muzzleFlash: null

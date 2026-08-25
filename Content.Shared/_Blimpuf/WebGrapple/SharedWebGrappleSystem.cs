@@ -10,6 +10,6 @@ public abstract class SharedWebGrappleSystem : EntitySystem
 
 }
 
-public sealed partial class ActionWebGrapple : InstantActionEvent
+public sealed partial class ActionWebGrapple : WorldTargetActionEvent
 {
 }
