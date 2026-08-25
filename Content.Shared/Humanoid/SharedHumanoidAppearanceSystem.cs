@@ -1,6 +1,7 @@
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
 using Content.Shared.Decals;
 using Content.Shared.Examine;
@@ -9,8 +10,8 @@ using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Inventory;
 using Content.Shared.Preferences;
+using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
-using Content.Shared.Starlight.TextToSpeech;
 using Robust.Shared;
 using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
@@ -22,7 +23,6 @@ using Robust.Shared.Serialization.Manager;
 using Robust.Shared.Serialization.Markdown;
 using Robust.Shared.Utility;
 using YamlDotNet.RepresentationModel;
-
 namespace Content.Shared.Humanoid;
 
 /// <summary>
@@ -34,15 +34,17 @@ namespace Content.Shared.Humanoid;
 ///     you still need a local copy so that players can set up their
 ///     characters.
 /// </summary>
-public abstract class SharedHumanoidAppearanceSystem : EntitySystem
+public abstract partial class SharedHumanoidAppearanceSystem : EntitySystem
 {
-    [Dependency] private readonly IConfigurationManager _cfgManager = default!;
-    [Dependency] private readonly INetManager _netManager = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly ISerializationManager _serManager = default!;
-    [Dependency] private readonly MarkingManager _markingManager = default!;
-    [Dependency] private readonly GrammarSystem _grammarSystem = default!;
-    [Dependency] private readonly IdentitySystem _identity = default!;
+    private static readonly Regex ProtoKinIdentifier = new(@"Proto[Kk]in(?![a-z])", RegexOptions.Compiled);
+
+    [Dependency] private IConfigurationManager _cfgManager = default!;
+    [Dependency] private INetManager _netManager = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private ISerializationManager _serManager = default!;
+    [Dependency] private MarkingManager _markingManager = default!;
+    [Dependency] private GrammarSystem _grammarSystem = default!;
+    [Dependency] private IdentitySystem _identity = default!;
 
     public static readonly ProtoId<SpeciesPrototype> DefaultSpecies = "Human";
 
@@ -106,10 +108,128 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
          * Add custom handling here for forks / version numbers if you care.
          */
 
+        export.Profile = MigrateImportedNeocyteProfile(export.Profile);
+        export.Profile.ForcedPrototype = string.Empty;
+
         var profile = export.Profile;
         var collection = IoCManager.Instance;
         profile.EnsureValid(session, collection!);
         return profile;
+    }
+
+    /// <summary>
+    /// Allows legacy Protogen, Cyclorite, and Dwarf characters from other servers to be imported as current species.
+    /// This is only for manual import compatibility.
+    /// </summary>
+    private static HumanoidCharacterProfile MigrateImportedNeocyteProfile(HumanoidCharacterProfile profile)
+    {
+        var changed = false;
+        var result = new HumanoidCharacterProfile(profile)
+        {
+            Species = MigrateImportedSpeciesIdentifier(profile.Species, ref changed),
+            ForcedPrototype = MigrateNeocyteIdentifier(profile.ForcedPrototype, ref changed),
+        };
+
+        var cybernetics = new List<string>(profile.Cybernetics.Count);
+        foreach (var cybernetic in profile.Cybernetics)
+            cybernetics.Add(MigrateNeocyteIdentifier(cybernetic, ref changed));
+        result.Cybernetics = cybernetics;
+
+        var appearance = profile.Appearance.Clone();
+        appearance.HairStyleId = MigrateNeocyteIdentifier(appearance.HairStyleId, ref changed);
+        appearance.FacialHairStyleId = MigrateNeocyteIdentifier(appearance.FacialHairStyleId, ref changed);
+        var markings = new List<Marking>(appearance.Markings.Count);
+        foreach (var marking in appearance.Markings)
+        {
+            var id = MigrateNeocyteIdentifier(marking.MarkingId, ref changed);
+            markings.Add(id == marking.MarkingId
+                ? marking
+                : new Marking(id, marking.MarkingColors, marking.IsGlowing)
+                {
+                    Visible = marking.Visible,
+                    Forced = marking.Forced,
+                });
+        }
+        appearance.Markings = markings;
+        result.Appearance = appearance;
+
+        foreach (var loadout in profile.Loadouts.Values)
+            result = result.WithLoadout(MigrateNeocyteLoadout(loadout, ref changed)!);
+
+        result.SpeciesLoadout = MigrateNeocyteLoadout(profile.SpeciesLoadout, ref changed);
+        return result;
+    }
+
+    private static string MigrateImportedSpeciesIdentifier(string identifier, ref bool changed)
+    {
+        var migrated = identifier switch
+        {
+            "Dwarf" => "Human",
+            "ProtoDwarf" => "NeoHuman",
+            "Cyclorite" => "TNebri",
+            _ => MigrateNeocyteIdentifier(identifier, ref changed),
+        };
+
+        changed |= migrated != identifier;
+        return migrated;
+    }
+
+    private static RoleLoadout? MigrateNeocyteLoadout(RoleLoadout? loadout, ref bool changed)
+    {
+        if (loadout == null)
+            return null;
+
+        var migrated = new RoleLoadout(MigrateNeocyteIdentifier(loadout.Role, ref changed))
+        {
+            EntityName = loadout.EntityName,
+        };
+
+        foreach (var (group, selected) in loadout.SelectedLoadouts)
+        {
+            var migratedGroup = MigrateNeocyteIdentifier(group, ref changed);
+            var migratedSelected = new List<Loadout>(selected.Count);
+            foreach (var selectedLoadout in selected)
+            {
+                migratedSelected.Add(new Loadout
+                {
+                    Prototype = MigrateNeocyteIdentifier(selectedLoadout.Prototype, ref changed),
+                });
+            }
+
+            migrated.SelectedLoadouts[migratedGroup] = migratedSelected;
+        }
+
+        return migrated;
+    }
+
+    private static string MigrateNeocyteIdentifier(string identifier, ref bool changed)
+    {
+        var migrated = identifier
+            .Replace("ProtoSlimePerson", "NeoSlimePerson", StringComparison.Ordinal)
+            .Replace("TrueProtogen", "TrueNeocyte", StringComparison.Ordinal)
+            .Replace("ProtogenCybernetics", "NeocyteCybernetics", StringComparison.Ordinal)
+            .Replace("Protogen", "Neocyte", StringComparison.Ordinal)
+            .Replace("ProtoArachnid", "NeoArachnid", StringComparison.Ordinal)
+            .Replace("ProtoAvali", "NeoAvali", StringComparison.Ordinal)
+            .Replace("ProtoCyclorite", "NeoTNebri", StringComparison.Ordinal)
+            .Replace("ProtoDiona", "NeoDiona", StringComparison.Ordinal)
+            .Replace("ProtoElf", "NeoElf", StringComparison.Ordinal)
+            .Replace("ProtoFelionoid", "NeoFelionoid", StringComparison.Ordinal)
+            .Replace("ProtoHuman", "NeoHuman", StringComparison.Ordinal)
+            .Replace("ProtoLagomorph", "NeoLagomorph", StringComparison.Ordinal)
+            .Replace("ProtoMoth", "NeoMoth", StringComparison.Ordinal)
+            .Replace("ProtoReptilian", "NeoReptilian", StringComparison.Ordinal)
+            .Replace("ProtoResomi", "NeoResomi", StringComparison.Ordinal)
+            .Replace("ProtoSlime", "NeoSlime", StringComparison.Ordinal)
+            .Replace("ProtoThaven", "NeoThaven", StringComparison.Ordinal)
+            .Replace("ProtoVox", "NeoVox", StringComparison.Ordinal)
+            .Replace("ProtoVulp", "NeoVulp", StringComparison.Ordinal)
+            .Replace("Cyclorite", "TNebri", StringComparison.Ordinal);
+
+        migrated = ProtoKinIdentifier.Replace(migrated, "NeoShadekin");
+
+        changed |= migrated != identifier;
+        return migrated;
     }
 
     private void OnInit(EntityUid uid, HumanoidAppearanceComponent humanoid, ComponentInit args)
@@ -190,11 +310,6 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
 
         SetSex(target, sourceHumanoid.Sex, false, targetHumanoid);
         SetGender((target, targetHumanoid), sourceHumanoid.Gender);
-
-        // Starlight start
-        if (sourceHumanoid.Voice != null)
-            SetTTSVoice(target, sourceHumanoid.Voice, targetHumanoid);
-        // Starlight end
 
         Dirty(target, targetHumanoid);
 
@@ -533,7 +648,6 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
         }
 
         EnsureDefaultMarkings(uid, humanoid);
-        SetTTSVoice(uid, profile.Voice, humanoid);
 
         humanoid.Gender = profile.Gender;
         if (TryComp<GrammarComponent>(uid, out var grammar))
@@ -595,7 +709,8 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
         markingObject.Forced = forced;
         if (color != null)
         {
-            for (var i = 0; i < prototype.Sprites.Count; i++)
+            // Starlight edit - color only the marking's exposed color slots.
+            for (var i = 0; i < prototype.ColorSlotCount; i++)
             {
                 markingObject.SetColor(i, color.Value);
             }
@@ -650,15 +765,6 @@ public abstract class SharedHumanoidAppearanceSystem : EntitySystem
 
         var ev = new MarkingsUpdateEvent(); //starlight
         RaiseLocalEvent(uid, ref ev); //starlight
-    }
-    //Starlight
-    public void SetTTSVoice(EntityUid uid, string voiceId, HumanoidAppearanceComponent humanoid)
-    {
-        if (!TryComp<TextToSpeechComponent>(uid, out var comp))
-            return;
-
-        humanoid.Voice = voiceId;
-        comp.VoicePrototypeId = voiceId;
     }
     /// <summary>
     /// Takes ID of the species prototype, returns UI-friendly name of the species.

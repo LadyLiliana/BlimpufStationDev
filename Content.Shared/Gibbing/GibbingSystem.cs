@@ -2,19 +2,20 @@ using Content.Shared.Destructible;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Audio;
 using Robust.Shared.Network;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Random;
 
 namespace Content.Shared.Gibbing;
 
-public sealed class GibbingSystem : EntitySystem
+public sealed partial class GibbingSystem : EntitySystem
 {
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedDestructibleSystem _destructible = default!;
-    [Dependency] private readonly SharedPhysicsSystem _physics = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedDestructibleSystem _destructible = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
 
     private static readonly SoundSpecifier? GibSound = new SoundCollectionSpecifier("gib", AudioParams.Default.WithVariation(0.025f));
 
@@ -63,9 +64,12 @@ public sealed class GibbingSystem : EntitySystem
 
     private void FlingDroppedEntity(EntityUid target)
     {
+        if (!TryComp<PhysicsComponent>(target, out var body))
+            return;
+
         var impulse = GibletLaunchImpulse + _random.NextFloat(GibletLaunchImpulseVariance);
         var scatterVec = _random.NextAngle().ToVec() * impulse;
-        _physics.ApplyLinearImpulse(target, scatterVec);
+        _physics.ApplyLinearImpulse(target, scatterVec, body: body);
     }
 }
 

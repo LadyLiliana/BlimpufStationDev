@@ -127,6 +127,7 @@
   groups:
   - GroupTankHarness
   - MailTechnicianHead
+  - MailTechnicianNeck
   - MailTechnicianJumpsuit
   - MailTechnicianBackpack
   - MailTechnicianOuterClothing
@@ -267,16 +268,6 @@
   nameDataset: NamesXenoborg
   canCustomizeName: true
 
-#- type: roleLoadout
-#  id: AntagBrighteye
-#  groups:
-#  - BrighteyeJumpsuit
-#  - BrighteyeNeck
-#  - BrighteyeShoes
-#  - BrighteyeGloves
-#  - Scarves
-#  - Pins
-
 - type: roleLoadout
   id: JobNanotrasenCareerTrainer
   groups:
@@ -286,8 +277,58 @@
   - NanotrasenCareerTrainerShoes
   - CommonBackpack
   - Trinkets
+  - Scarves
+  - Pins
+  - Pens
   - Survival
   - GroupSpeciesBreathTool
+
+# Antag loadouts (Only has species stuff right now)
+- type: roleLoadout
+  id: AntagNukeops
+  groups:
+  - NeocyteCybernetics
+  - SurvivalSyndicate
+  - GroupSpeciesBreathTool
+  - GroupPocketTankDouble
+
+- type: roleLoadout
+  id: AntagNukeopsCommander
+  groups:
+  - NeocyteCybernetics
+  - SurvivalSyndicate
+  - GroupSpeciesBreathTool
+  - GroupPocketTankDouble
+
+- type: roleLoadout
+  id: AntagNukeopsMedic
+  groups:
+  - NeocyteCybernetics
+  - SurvivalSyndicate
+  - GroupSpeciesBreathTool
+  - GroupPocketTankDouble
+
+- type: roleLoadout
+  id: AntagSpaceNinja
+  groups:
+  - NeocyteCybernetics
+  - GroupEVATank
+
+- type: roleLoadout
+  id: AntagWizard
+  groups:
+  - NeocyteCybernetics
+  - SurvivalExtended
+  - GroupSpeciesBreathTool
+  - GroupTankHarness
+
+- type: roleLoadout
+  id: AntagWizardDuelist
+  groups:
+  - NeocyteCybernetics
+  - SurvivalExtended
+  - GroupSpeciesBreathTool
+  - GroupTankHarness
 
 # Wizard duelist from Moff Station. Placed here instead of in Moff's files since they're not a free agent here.
 - type: roleLoadout

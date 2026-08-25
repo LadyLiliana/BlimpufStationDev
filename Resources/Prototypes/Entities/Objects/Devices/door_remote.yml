@@ -102,9 +102,9 @@
     layers:
     - state: door_remotebase
     - state: door_remotelightscolour
-      color: "#cb0000"
+      color: "#089acf" # Blimpuf Blue Sec
     - state: door_remotescreencolour
-      color: "#830000"
+      color: "#2c6682" # Blimpuf Blue Sec
   - type: Access
     groups:
     - Security
@@ -118,9 +118,9 @@
     layers:
     - state: door_remotebase
     - state: door_remotelightscolour
-      color: "#e80000"
+      color: "#089acf" # Blimpuf Blue Sec
     - state: door_remotescreencolour
-      color: "#a80000"
+      color: "#089acf" # Blimpuf Blue Sec
   - type: Access
     groups:
     - Armory

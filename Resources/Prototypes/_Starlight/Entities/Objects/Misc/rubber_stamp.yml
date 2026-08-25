@@ -7,20 +7,20 @@
   components:
   - type: Stamp
     stampedName: Magistrate
-    stampedColor: "#FF5297"
+    stampedColor: "#01a100"
     stampState: "paper_stamp-magistrate"
   - type: Sprite
     sprite: _Starlight/Objects/Misc/stamps.rsi
     state: stamp-magistrate
 
 - type: entity
-  name: nt representative's rubber stamp
+  name: cc representative's rubber stamp
   parent: [ RubberStampBase, BaseCommandContraband ]
   id: RubberStampNtrep
   suffix: DO NOT MAP
   components:
   - type: Stamp
-    stampedName: "NanoTrasen Representative"
+    stampedName: "Central Command Representative"
     stampedColor: "#fcc032"
     stampState: "paper_stamp-ntrep"
   - type: Sprite
@@ -36,20 +36,20 @@
     - type: Stamp
       stampedName: "Internal Affairs Agent"
       stampedColor: "#33CC33"
-      stampState: "paper_stamp-ok"
+      stampState: "paper_stamp-iaa"
     - type: Sprite
       sprite: _Starlight/Objects/Misc/stamps.rsi
       state: stamp-iaa
 
 - type: entity
-  name: blueshield rubber stamp
+  name: central enforcer rubber stamp
   parent: [ RubberStampBase, BaseBlueShieldContraband ]
   id: RubberStampBSO
   suffix: DO NOT MAP
   components:
   - type: Stamp
-    stampedName: "Blueshield Officer"
-    stampedColor: "#004281"
+    stampedName: "Central Command Enforcement Officer"
+    stampedColor: "#386c30"
     stampState: "paper_stamp-bso"
   - type: Sprite
     sprite: _Starlight/Objects/Misc/stamps.rsi
@@ -64,7 +64,7 @@
   components:
     - type: Stamp
       stampedName: "Brigmedic"
-      stampedColor: "#ae2e33"
+      stampedColor: "#000000"
       stampState: "paper_stamp-brigmedic"
     - type: Sprite
       sprite: _Starlight/Objects/Misc/stamps.rsi
@@ -170,11 +170,11 @@
   components:
   - type: Stamp
     stampedName: "Central Special Operations Division"
-    stampedColor: "#741B47"
-    stampState: "paper_stamp-magistrate"
+    stampedColor: "#ad2a6b"
+    stampState: "paper_stamp-csop"
   - type: Sprite
     sprite: _Starlight/Objects/Misc/stamps.rsi
-    state: stamp-magistrate
+    state: stamp-csop
 
 - type: entity
   name: central security division rubber stamp
@@ -184,7 +184,7 @@
   components:
   - type: Stamp
     stampedName: "Central Security Division"
-    stampedColor: "#cc0000"
+    stampedColor: "#2c6682"
     stampState: "paper_stamp-hos"
   - type: Sprite
     state: stamp-hos
@@ -447,16 +447,17 @@
   - type: Sprite
     state: stamp-detective
 
-# MedTak
+# Civilian stamps
 - type: entity
-  name: MedTak rubber stamp
-  parent: [ RubberStampBase, BaseMedTakContraband ]
-  id: RubberStampMedTak
-  categories: [ DoNotMap ]
+  name: reporter rubber stamp
+  parent: RubberStampBase
+  id: RubberStampReporter
+  description: A rubber stamp for stamping important documents. Write all the articles!
   components:
-  - type: Stamp
-    stampedName: "MedTak"
-    stampedColor: "#880606"
-    stampState: "paper_stamp-syndicate"
-  - type: Sprite
-    state: stamp-syndicate
+    - type: Stamp
+      stampedName: Reporter
+      stampedColor: "#4B75FF"
+      stampState: "paper_stamp-psychologist"
+    - type: Sprite
+      state: stamp-hop
+

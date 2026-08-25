@@ -9,19 +9,9 @@
   - ArtificialBluespaceCrystal
 
 - type: latheRecipePack
-  id: ScienceDarkBreacher
-  recipes:
-  - DarkBreacherMachineCircuitboard
-
-- type: latheRecipePack
   id: SecurityScienceBlueSpace
   recipes:
   - NullspaceAnchorMachineCircuitboard
-
-- type: latheRecipePack
-  id: NullSpaceDrainer
-  recipes:
-  - NullSpaceDrainer
 
 - type: latheRecipe
   parent: BaseToolRecipe
@@ -30,3 +20,10 @@
   materials:
     Plastic: 200
     Glass: 150
+
+## Dynamic
+
+- type: latheRecipePack
+  id: OublietteCircuitBoard
+  recipes:
+  - OublietteCircuitBoard

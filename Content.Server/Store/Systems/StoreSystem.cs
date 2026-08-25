@@ -16,6 +16,7 @@ using Robust.Shared.Utility;
 using Content.Shared.Access.Components;
 using Robust.Shared.GameObjects;
 using Content.Shared.Access.Systems;
+using Content.Shared._Starlight.Store.Components;
 #endregion Starlight
 
 namespace Content.Server.Store.Systems;
@@ -26,10 +27,10 @@ namespace Content.Server.Store.Systems;
 /// </summary>
 public sealed partial class StoreSystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly AccessReaderSystem _accessReader = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private AccessReaderSystem _accessReader = default!;
+    [Dependency] private IGameTiming _timing = default!;
 
     public override void Initialize()
     {
@@ -59,10 +60,11 @@ public sealed partial class StoreSystem : EntitySystem
 
     private void OnMapInit(EntityUid uid, StoreComponent component, MapInitEvent args)
     {
-        // STARLIGHT: Ensure the store has a StockLimitedProcessingComponent
+        // Starlight-start: Ensure the store has a StockLimitedProcessingComponent
         EnsureComp<StockLimitedProcessingComponent>(uid);
 
-        RefreshAllListings(component);
+        RefreshAllListings((uid, component));
+        // Starlight-end
         component.StartingMap = Transform(uid).MapUid;
     }
 
@@ -71,7 +73,9 @@ public sealed partial class StoreSystem : EntitySystem
         // for traitors, because the StoreComponent for the PDA can be added at any time.
         if (MetaData(uid).EntityLifeStage == EntityLifeStage.MapInitialized)
         {
-            RefreshAllListings(component);
+            // Starlight-start
+            RefreshAllListings((uid, component));
+            // Starlight-end
         }
 
         var ev = new StoreAddedEvent();

@@ -10,6 +10,7 @@ using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom;
 
+// ReSharper disable once CheckNamespace
 namespace Content.Shared.Body.Components;
 
 /// <summary>
@@ -151,6 +152,13 @@ public sealed partial class BloodstreamComponent : Component
     /// </remarks>
     [DataField, AutoNetworkedField]
     public Solution BloodReferenceSolution = new([new("Blood", 300)]);
+
+    /// <summary>
+    /// Optional visual color for blood reagents from this entity.
+    /// This is stored on the reagent instance, so transferred blood keeps its color.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public Color? BloodReagentColor;
 
     /// <summary>
     /// Caches the blood data of an entity.

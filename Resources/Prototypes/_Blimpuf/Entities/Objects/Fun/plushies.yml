@@ -1,0 +1,61 @@
+- type: entity
+  parent: BasePlushieVocalizer
+  id: PlushieKara
+  name: cargo slime plushie
+  description: This hard working cargo tech looks like she's literally bubbling with excitement.
+  components:
+    - type: Item
+      size: Small
+      sprite: _Blimpuf/Objects/Fun/Plushies/kara_plushie.rsi
+    - type: Sprite
+      sprite: _Blimpuf/Objects/Fun/Plushies/kara_plushie.rsi
+      state: icon
+    - type: ItemToggle
+      onUse: false
+      verbToggleOn: plushie-voicebox-activate
+      verbToggleOff: plushie-voicebox-deactivate
+    - type: Clothing
+      quickEquip: false
+      sprite: _Blimpuf/Objects/Fun/Plushies/kara_plushie.rsi
+      slots:
+        - HEAD
+    - type: Extractable
+      juiceSolution:
+        reagents:
+          - ReagentId: Slime
+            Quantity: 30
+    - type: SolutionContainerManager
+      solutions:
+        food:
+          maxVol: 20
+          reagents:
+            - ReagentId: Fiber
+              Quantity: 10
+            - ReagentId: Slime
+              Quantity: 10
+    - type: FoodSequenceElement
+      entries:
+        CottonBurger: LizardPlushie
+    - type: ComponentToggler
+      components:
+        - type: DatasetVocalizer
+          dataset: PlushiesKara
+    - type: EmitSoundOnUse
+      sound: &PlushieKaraSound
+        path: /Audio/Voice/Slime/slime_squish.ogg
+    - type: EmitSoundOnLand
+      sound: *PlushieKaraSound
+    - type: EmitSoundOnActivate
+      sound: *PlushieKaraSound
+    - type: EmitSoundOnCollide
+      sound: *PlushieKaraSound
+    - type: EmitSoundOnTrigger
+      sound: *PlushieKaraSound
+    - type: MeleeWeapon
+      soundHit: *PlushieKaraSound
+    - type: Edible
+      useSound: *PlushieKaraSound
+    - type: Tag
+      tags:
+        - Payload
+        - ClothMade

@@ -19,6 +19,108 @@
   text: species-name-thaven
 
 - type: quickPhrase
-  id: SpeciesCycloritePhrase
+  id: SpeciesTNebriPhrase
   parent: BaseCrewSpeciesPhrase
-  text: species-name-cyclorite
+  text: species-name-tnebri
+
+- type: quickPhrase
+  id: SpeciesElfPhrase
+  parent: BaseCrewSpeciesPhrase
+  text: species-name-elf
+
+- type: quickPhrase
+  id: SpeciesIPCPhrase
+  parent: BaseCrewSpeciesPhrase
+  text: species-name-ipc
+
+# Neocytes and neocyte subspecies
+
+- type: quickPhrase
+  id: SpeciesNeocytePhrase
+  parent: BaseCrewSpeciesPhrase
+  text: species-name-neocyte
+
+- type: quickPhrase
+  id: SpeciesTrueNeocytePhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-trueneocyte
+
+- type: quickPhrase
+  id: SpeciesNeohumanPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neohuman
+
+- type: quickPhrase
+  id: SpeciesNeodionaPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neodiona
+
+- type: quickPhrase
+  id: SpeciesNeoarachnidPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoarachnid
+
+- type: quickPhrase
+  id: SpeciesNeomothPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neomoth
+
+- type: quickPhrase
+  id: SpeciesNeoreptilianPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoreptilian
+
+- type: quickPhrase
+  id: SpeciesNeoslimepersonPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoslimeperson
+
+- type: quickPhrase
+  id: SpeciesNeovulpPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neovulp
+
+- type: quickPhrase
+  id: SpeciesNeoresomiPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoresomi
+
+- type: quickPhrase
+  id: SpeciesNeoavaliPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoavali
+
+- type: quickPhrase
+  id: SpeciesNeovoxPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neovox
+
+- type: quickPhrase
+  id: SpeciesNeolagomorphPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neolagomorph
+
+- type: quickPhrase
+  id: SpeciesNeofelionoidPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neofelionoid
+
+- type: quickPhrase
+  id: SpeciesNeoShadekinPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoshadekin
+
+- type: quickPhrase
+  id: SpeciesNeothavenPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neothaven
+
+- type: quickPhrase
+  id: SpeciesNeotnebriPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neotnebri
+
+- type: quickPhrase
+  id: SpeciesNeoelfPhrase
+  parent: SpeciesNeocytePhrase
+  text: subspecies-name-neoelf

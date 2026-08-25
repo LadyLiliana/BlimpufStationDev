@@ -11,8 +11,11 @@ using Content.Shared.Roles;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Content.Shared.Body.Part;
-using Content.Shared.Starlight;
-using Robust.Shared.Utility; // Starlight
+#region Starlight
+using Content.Shared._Starlight.Medical.Limbs;
+using Content.Client._Starlight.Humanoid;
+using Content.Shared._Starlight.Humanoid;
+#endregion
 
 namespace Content.Client.Lobby.UI.ProfileEditorControls;
 
@@ -148,14 +151,6 @@ public sealed partial class ProfilePreviewSpriteView
                     continue;
 
                 var antagLoadoutId = selectedAntagProto.RoleLoadout?.FirstOrDefault();
-
-                // Brighteye Color Valid
-                if (selectedAntagProto.PreviewStartingGear.HasValue || antagLoadoutId is not null)
-                    if (selectedAntagProto.ID == "Brighteye")
-                    {
-                        humanoid.Appearance.EyeColor = EyeColor.MakeBrighteyeValid(humanoid.Appearance.EyeColor);
-                        humanoid.Appearance.EyeGlowing = true;
-                    }
 
                 if (antagLoadoutId is not null)
                 {

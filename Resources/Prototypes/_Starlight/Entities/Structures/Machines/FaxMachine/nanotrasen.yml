@@ -1,0 +1,29 @@
+# Group
+- type: faxGroup
+  id: FaxGroupNanoTrasen
+  name: fax-group-nanotrasen
+  color: "#2253b5"
+  order: 3000
+
+# Base fax
+- type: entity
+  abstract: true
+  parent: FaxMachineBase
+  id: FaxMachineNTBase
+  components:
+    - type: Sprite
+      layers:
+        - state: icon
+          map: [ "base" ]
+          color: "#2253b5"
+
+# Fax machines
+- type: entity
+  parent: FaxMachineNTBase
+  id: FaxMachineNTCareerTrainer
+  suffix: "NT: Career Trainer"
+  components:
+    - type: FaxMachine
+      group: FaxGroupNanoTrasen
+      name: "NT Career Trainer"
+      order: 700

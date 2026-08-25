@@ -73,8 +73,8 @@ crafting-menu-text-IMGR = Organization is not the strong suit of any tider. Hold
 crafting-menu-name-IMGM = improvised ammo box (.45 magnum)
 crafting-menu-text-IMGM = Organization is not the strong suit of any tider. Holds 40 improvised .45 magnum rounds.
 
-crafting-menu-name-IMGS = improvised ammo box (.50 shotgun)
-crafting-menu-text-IMGS = Organization is not the strong suit of any tider. Holds 40 improvised .50 shotgun shells.
+crafting-menu-name-IMGS = improvised ammo box (12 gauge)
+crafting-menu-text-IMGS = Organization is not the strong suit of any tider. Holds 40 improvised 12 gauge shells.
 
 crafting-menu-name-phosphorus = crushed phosphorus
 crafting-menu-text-phosphorus = Crushing the tips off of matches yields this bright red, exceedingly volatile compound.
@@ -151,7 +151,7 @@ crafting-menu-name-IVT = improvised vest
 crafting-menu-text-IVT = Actually better than nothing, but still a bit on the heavy side, good at keeping you from getting stabbed.
 
 crafting-menu-name-FVT = forged vest
-crafting-menu-text-FVT = A high quality armor vest based upon old earth mongolian designs, it is very effective at what it does.
+crafting-menu-text-FVT = A high quality armor vest based upon old terran designs, it is very effective at what it does.
 
 crafting-menu-name-PVT = paladin suit
 crafting-menu-text-PVT = The best a tidersmith can make! Don this suit of armor and deal swift justice to evildoers! Or.. do the evil yourself, I won't judge.

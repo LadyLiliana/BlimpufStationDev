@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Linq;
 using System.Threading.Tasks;
 using Content.Shared._NullLink;
 using Robust.Shared.Player;
@@ -45,6 +44,6 @@ public sealed partial class NullLinkPlayerManager : INullLinkPlayerManager
     => _netMgr.ServerSendMessage(new MsgUpdatePlayerRoles
     {
         Roles = roles,
-        DiscordLink = GetDiscordAuthUrl(session.UserId.ToString())
+        DiscordLink = _blimpufDiscordLink.GetAuthUrl(session.UserId.ToString())
     }, session.Channel);
 }

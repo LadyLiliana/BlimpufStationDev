@@ -9,6 +9,7 @@ using Content.Server.Connection.IPIntel;
 using Content.Server.Database;
 using Content.Server.GameTicking;
 using Content.Server.Preferences.Managers;
+using Content.Server._Blimpuf.Discord;
 using Content.Shared.CCVar;
 using Content.Shared.GameTicking;
 using Content.Shared.Players.PlayTimeTracking;
@@ -22,13 +23,12 @@ using Robust.Shared.Timing;
 
 #region Starlight
 using Content.Server._NullLink.Core;
-using Content.Server._NullLink.PlayerData;
 using Content.Server._Starlight.Connection;
 using Content.Server.Discord.DiscordLink;
 using Content.Shared._NullLink;
 using Content.Shared.NullLink.CCVar;
-using Content.Shared.Starlight;
-using Content.Shared.Starlight.CCVar;
+using Content.Shared._Starlight;
+using Content.Shared._Starlight.CCVar;
 using Robust.Shared.Utility;
 #endregion Starlight
 
@@ -70,22 +70,22 @@ namespace Content.Server.Connection
     /// </summary>
     public sealed partial class ConnectionManager : IConnectionManager
     {
-        [Dependency] private readonly IActorRouter _actors = default!; // NullLink
-        [Dependency] private readonly INullLinkPlayerManager _nullLinkPlayerManager = default!; // NullLink
-        [Dependency] private readonly IBanManager _banManager = default!; // NullLink-edit: move to general method at Manager
-        [Dependency] private readonly IPlayerManager _plyMgr = default!;
-        [Dependency] private readonly IServerNetManager _netMgr = default!;
-        [Dependency] private readonly IServerDbManager _db = default!;
-        [Dependency] private readonly IConfigurationManager _cfg = default!;
-        [Dependency] private readonly ILocalizationManager _loc = default!;
-        [Dependency] private readonly ServerDbEntryManager _serverDbEntry = default!;
-        [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-        [Dependency] private readonly IGameTiming _gameTiming = default!;
-        [Dependency] private readonly ILogManager _logManager = default!;
-        [Dependency] private readonly IChatManager _chatManager = default!;
-        [Dependency] private readonly IHttpClientHolder _http = default!;
-        [Dependency] private readonly IAdminManager _adminManager = default!;
-        [Dependency] private readonly IEntityManager _entityManager = default!;
+        [Dependency] private IActorRouter _actors = default!; // NullLink
+        [Dependency] private IBlimpufDiscordLinkService _blimpufDiscordLink = default!;
+        [Dependency] private IBanManager _banManager = default!; // NullLink-edit: move to general method at Manager
+        [Dependency] private IPlayerManager _plyMgr = default!;
+        [Dependency] private IServerNetManager _netMgr = default!;
+        [Dependency] private IServerDbManager _db = default!;
+        [Dependency] private IConfigurationManager _cfg = default!;
+        [Dependency] private ILocalizationManager _loc = default!;
+        [Dependency] private ServerDbEntryManager _serverDbEntry = default!;
+        [Dependency] private IPrototypeManager _prototypeManager = default!;
+        [Dependency] private IGameTiming _gameTiming = default!;
+        [Dependency] private ILogManager _logManager = default!;
+        [Dependency] private IChatManager _chatManager = default!;
+        [Dependency] private IHttpClientHolder _http = default!;
+        [Dependency] private IAdminManager _adminManager = default!;
+        [Dependency] private IEntityManager _entityManager = default!;
 
         private GameTicker? _ticker;
 
@@ -178,9 +178,50 @@ namespace Content.Server.Connection
 
         private async Task NetMgrOnConnecting(NetConnectingArgs e)
         {
-            // Starlight: resolve real client IP via conntrack-agent (SNAT bypass)
-            var addr = await _conntrack.ResolveRealIp(e.IP) ?? e.IP.Address;
+            // starlight start
+            var rateExempt = HasTemporaryBypass(e.UserId) || IPAddress.IsLoopback(e.IP.Address);
 
+            if (!rateExempt && GlobalRateLimitDeny() is { } globalReason)
+            {
+                e.Deny(new NetDenyReason(globalReason, new Dictionary<string, object>()));
+                return;
+            }
+
+            var (ctStatus, ctIp) = await _conntrack.ResolveRealIp(e.IP);
+            IPAddress addr;
+            switch (ctStatus)
+            {
+                case ConntrackStatus.Resolved:
+                    addr = ctIp!;
+                    break;
+                case ConntrackStatus.NotApplicable:
+                    addr = e.IP.Address;
+                    break;
+                default:
+                    var lastKnown = (await _db.GetPlayerRecordByUserId(e.UserId))?.LastSeenAddress;
+                    if (lastKnown != null && !_conntrack.IsSnatAddress(lastKnown))
+                    {
+                        addr = lastKnown;
+                        _sawmill.Warning("Conntrack failed for {User}; using last known real IP {Address}", e.UserId, addr);
+                    }
+                    else
+                    {
+                        _sawmill.Warning("Conntrack failed for {User} with no known real IP; asking to reconnect later", e.UserId);
+                        e.Deny(new NetDenyReason(
+                            Loc.GetString("conntrack-resolve-failed-retry"),
+                            new Dictionary<string, object> { ["delay"] = _cfg.GetCVar(CCVars.GameServerFullReconnectDelay) }));
+                        return;
+                    }
+                    break;
+            }
+
+            if (!rateExempt && !_conntrack.IsSnatAddress(addr) && PerIpRateLimitDeny(addr) is { } ipReason)
+            {
+                e.Deny(new NetDenyReason(ipReason, new Dictionary<string, object>()));
+                return;
+            }
+
+            // starlight end
             var deny = await ShouldDeny(e, addr); // Starlight
             var userId = e.UserId;
 
@@ -201,8 +242,11 @@ namespace Content.Server.Connection
                 if (reason == ConnectionDenyReason.Full)
                     properties["delay"] = _cfg.GetCVar(CCVars.GameServerFullReconnectDelay);
 
-                //NullLink discord link
-                properties["discord"] = _nullLinkPlayerManager.GetDiscordAuthUrl(e.UserId.ToString());
+                var discordAuthUrl = _blimpufDiscordLink.GetAuthUrl(e.UserId.ToString());
+                properties["discord"] = discordAuthUrl;
+
+                if (reason == ConnectionDenyReason.Whitelist)
+                    msg = BuildWhitelistDenyMessage(msg, properties);
 
                 e.Deny(new NetDenyReason(msg, properties));
             }
@@ -306,16 +350,17 @@ namespace Content.Server.Connection
                 var record = await _db.GetPlayerRecordByUserId(userId);
                 var bypassAllowed = _cfg.GetCVar(CCVars.BypassBunkerWhitelist) && await _db.GetWhitelistStatusAsync(userId);
 
-                // NullLink
                 try
                 {
-                    if (!bypassAllowed
-                        && _bunkerBypass is not null
-                        && _actors.TryGetServerGrain(out var serverGrain))
-                        bypassAllowed = await serverGrain.HasPlayerAnyRole(userId, _bunkerBypass.Roles);
+                    if (!bypassAllowed && _bunkerBypass is not null)
+                    {
+                        var roles = await _blimpufDiscordRoles.GetRolesAsync(userId);
+                        bypassAllowed = roles?.Roles.Any(role => _bunkerBypass.Roles.Contains(role)) == true;
+                    }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _sawmill.Warning($"Can't get Blimpuf Discord roles for panic bunker bypass for {userId}: {ex}");
                 }
 
                 var minOverallMinutes = _cfg.GetCVar(CCVars.PanicBunkerMinOverallMinutes);
@@ -328,16 +373,15 @@ namespace Content.Server.Connection
                         && proto.Recognition.TryGetValue(_server ?? "", out var recs))
                     {
                         var nulllinkPlaytime = await serverGrain.GetPlayTime(e.UserId, [PlayTimeTrackingShared.TrackerOverall], [.. recs]);
-                        overallTime.TimeSpent += TimeSpan.FromSeconds(nulllinkPlaytime.Sum(x => x.Time.TotalSeconds));
+                        overallTime.TimeSpent += TimeSpan.FromTicks(nulllinkPlaytime.Sum(x => x.Time.Ticks));
                     }
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    _sawmill.Log(LogLevel.Warning, "Can't get NullLink playtime for {userId}! {ex}", e.UserId, ex);
                 }
 
-                var validAccountAge = record != null &&
-                      record.FirstSeenTime.CompareTo(DateTimeOffset.UtcNow - TimeSpan.FromMinutes(minMinutesAge)) <= 0;
-                // NullLink
+                var validAccountAge = record != null ? record.FirstSeenTime.CompareTo(DateTimeOffset.UtcNow - TimeSpan.FromMinutes(minMinutesAge)) <= 0 : overallTime.TimeSpent.TotalMinutes >= minMinutesAge;
 
                 // Use the custom reason if it exists & they don't have the minimum account age
                 if (customReason != string.Empty && !validAccountAge && !bypassAllowed)
@@ -352,7 +396,7 @@ namespace Content.Server.Connection
                             ("reason", Loc.GetString("panic-bunker-account-reason-account", ("minutes", minMinutesAge)))), null);
                 }
 
-                var haveMinOverallTime = overallTime != null && overallTime.TimeSpent.TotalMinutes > minOverallMinutes;
+                var haveMinOverallTime = overallTime.TimeSpent.TotalMinutes >= minOverallMinutes; // NullLink-edit
 
                 // Use the custom reason if it exists & they don't have the minimum time
                 if (customReason != string.Empty && !haveMinOverallTime && !bypassAllowed)
@@ -430,6 +474,39 @@ namespace Content.Server.Connection
             }
 
             return null;
+        }
+
+        private string BuildWhitelistDenyMessage(string baseMessage, Dictionary<string, object> properties)
+        {
+            var lines = new List<string>
+            {
+                baseMessage,
+                "",
+                Loc.GetString("blimpuf-whitelist-denial-sync"),
+            };
+
+            var discordUrl = _cfg.GetCVar(CCVars.InfoLinksDiscord).Trim();
+            var websiteUrl = _cfg.GetCVar(CCVars.InfoLinksWebsite).Trim();
+
+            if (!string.IsNullOrWhiteSpace(discordUrl) || !string.IsNullOrWhiteSpace(websiteUrl))
+            {
+                lines.Add("");
+
+                if (!string.IsNullOrWhiteSpace(discordUrl) && !string.IsNullOrWhiteSpace(websiteUrl))
+                    lines.Add(Loc.GetString("blimpuf-whitelist-denial-apply-discord-and-website"));
+                else if (!string.IsNullOrWhiteSpace(discordUrl))
+                    lines.Add(Loc.GetString("blimpuf-whitelist-denial-apply-discord"));
+                else
+                    lines.Add(Loc.GetString("blimpuf-whitelist-denial-apply-website"));
+
+                if (!string.IsNullOrWhiteSpace(discordUrl))
+                    properties["applyDiscord"] = discordUrl;
+
+                if (!string.IsNullOrWhiteSpace(websiteUrl))
+                    properties["applyWebsite"] = websiteUrl;
+            }
+
+            return string.Join('\n', lines);
         }
 
         private bool HasTemporaryBypass(NetUserId user)

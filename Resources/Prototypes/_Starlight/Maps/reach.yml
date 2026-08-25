@@ -1,11 +1,11 @@
 - type: gameMap
-  id: StarlightReach
+  id: BlimpufReach
   mapName: 'Reach'
-  mapPath: /Maps/_Starlight/Stations/Reach.yml
+  mapPath: /Maps/_Blimpuf/Stations/Reach.yml
   minPlayers: 0
   maxPlayers: 15
   stations:
-    StarlightReach:
+    BlimpufReach:
       stationProto: StandardNanotrasenStation
       components:
         - type: StationNameSetup
@@ -24,6 +24,7 @@
             Botanist: [ 1, 1 ]
             Chef: [ 1, 1 ]
             Janitor: [ 1, 1 ]
+            Lawyer: [ 1, 1 ]
             ServiceWorker: [ 1, 1 ]
             #engineering
             ChiefEngineer: [ 1, 1 ]
@@ -40,13 +41,14 @@
             #science
             ResearchDirector: [ 1, 1 ]
             Scientist: [ 1, 1 ]
+            Roboticist: [ 1, 1 ]
             ResearchAssistant: [ 1, 1 ]
             #security
             HeadOfSecurity: [ 1, 1 ]
             Warden: [ 1, 1 ]
             DutyOfficer: [ 1, 1 ]
             SecurityOfficer: [ 2, 3 ]
-            SecurityCadet: [ 1, 1 ]
+            SecurityCadet: [ 2, 2 ]
             #supply
             Quartermaster: [ 1, 1 ]
             SalvageLead: [ 1, 1 ]

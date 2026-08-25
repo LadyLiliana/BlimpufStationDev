@@ -1,6 +1,8 @@
 ﻿using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Content.Server._Blimpuf.Discord;
 using Content.Server._NullLink.Core;
 using Content.Server._NullLink.Helpers;
 using Content.Server.Administration.Managers;
@@ -21,21 +23,24 @@ namespace Content.Server._NullLink.PlayerData;
 
 public sealed partial class NullLinkPlayerManager : INullLinkPlayerManager, IAchievementRewardManager
 {
-    [Dependency] private readonly IActorRouter _actors = default!;
-    [Dependency] private readonly IPlayerManager _playerManager = default!;
-    [Dependency] private readonly IConfigurationManager _cfg = default!;
-    [Dependency] private readonly IServerNetManager _netMgr = default!;
-    [Dependency] private readonly ILogManager _logManager = default!;
-    [Dependency] private readonly IPrototypeManager _proto = default!;
-    [Dependency] private readonly PlayTimeTrackingManager _playTimeTrackingManager = default!;
-    [Dependency] private readonly ISharedNullLinkPlayerResourcesManager _playerResourcesManager = default!;
-    [Dependency] private readonly IServerDbManager _dbManager = default!;
-    [Dependency] private readonly IAdminManager _adminManager = default!;
-    [Dependency] private readonly ITaskManager _taskManager = default!;
+    [Dependency] private IActorRouter _actors = default!;
+    [Dependency] private IPlayerManager _playerManager = default!;
+    [Dependency] private IConfigurationManager _cfg = default!;
+    [Dependency] private IServerNetManager _netMgr = default!;
+    [Dependency] private ILogManager _logManager = default!;
+    [Dependency] private IPrototypeManager _proto = default!;
+    [Dependency] private PlayTimeTrackingManager _playTimeTrackingManager = default!;
+    [Dependency] private ISharedNullLinkPlayerResourcesManager _playerResourcesManager = default!;
+    [Dependency] private IServerDbManager _dbManager = default!;
+    [Dependency] private IAdminManager _adminManager = default!;
+    [Dependency] private ITaskManager _taskManager = default!;
+    [Dependency] private IBlimpufDiscordRoleProvider _blimpufDiscordRoles = default!;
+    [Dependency] private IBlimpufDiscordLinkService _blimpufDiscordLink = default!;
 
     private readonly ConcurrentDictionary<Guid, PlayerData> _playerById = [];
     private readonly ConcurrentDictionary<Guid, ICommonSession> _mentors = [];
     private ISawmill _sawmill = default!;
+    private ISawmill _blimpufDiscordSawmill = default!;
     private RoleRequirementPrototype? _mentorReq;
     private TitleBuilderPrototype? _builder;
     private ServerPlaytimeRecognitionPrototype? _serverPlaytimeRecognition;
@@ -47,13 +52,13 @@ public sealed partial class NullLinkPlayerManager : INullLinkPlayerManager, IAch
     public void Initialize()
     {
         _sawmill = _logManager.GetSawmill("NullLink player data");
+        _blimpufDiscordSawmill = _logManager.GetSawmill("blimpuf.discord.roles");
         _netMgr.RegisterNetMessage<MsgUpdatePlayerRoles>();
         _netMgr.RegisterNetMessage<MsgUpdatePlayerPlayTime>();
         _netMgr.RegisterNetMessage<MsgUpdatePlayerResources>();
         _netMgr.RegisterNetMessage<MsgAchievementList>();
         _netMgr.RegisterNetMessage<MsgAchievementNotification>();
         _playerManager.PlayerStatusChanged += PlayerStatusChanged;
-        InitializeLinking();
         _cfg.OnValueChanged(NullLinkCCVars.RoleReqMentors, UpdateMentors, true);
         _cfg.OnValueChanged(NullLinkCCVars.AdminRankBuilder, UpdateAdminBuilder, true);
         _cfg.OnValueChanged(NullLinkCCVars.TitleBuild, UpdateTitleBuilder, true);
@@ -103,21 +108,35 @@ public sealed partial class NullLinkPlayerManager : INullLinkPlayerManager, IAch
                 {
                     Session = e.Session,
                 };
-                if (!_playerById.TryAdd(e.Session.UserId, state))
-                    _sawmill.Error($"Failed to add player with UserId {e.Session.UserId} to playerById dictionary.");
+                _playerById[e.Session.UserId] = state;
                 if (_actors.TryGetServerGrain(out var serverGrain))
                     serverGrain.PlayerConnected(e.Session.UserId)
                         .FireAndForget(err=> _sawmill.Error($"PlayerConnected dispatch failed: {err}"));
                 SendPlayerRoles(e.Session, state.Roles);
+                SyncBlimpufDiscordRoles(e.Session);
                 break;
             case SessionStatus.InGame:
+                if (_playerById.TryGetValue(e.Session.UserId, out var inGamePlayerData)
+                    && inGamePlayerData.RolesLoaded) // Blimpuf: make sure Discord roles are actually loaded before assigning
+                {
+                    var userId = e.Session.UserId.UserId;
+                    MentorCheck(userId, inGamePlayerData);
+                    AdminCheck(userId, inGamePlayerData);
+                    RebuildTitle(userId, inGamePlayerData);
+                    SendPlayerRoles(e.Session, inGamePlayerData.Roles);
+                }
                 break;
             case SessionStatus.Disconnected:
                 if (_actors.TryGetServerGrain(out var serverGrain2))
                     serverGrain2.PlayerDisconnected(e.Session.UserId)
                         .FireAndForget(err => _sawmill.Error($"PlayerDisconnected dispatch failed: {err}"));
-                _playerById.Remove(e.Session.UserId, out _);
+                if (_playerById.TryGetValue(e.Session.UserId, out var playerData)
+                    && playerData.Session == e.Session)
+                {
+                    _playerById.Remove(e.Session.UserId, out _);
+                }
                 _mentors.Remove(e.Session.UserId, out _);
+                _discordPromptOpen.Remove(e.Session);
                 break;
             default:
                 break;
@@ -152,4 +171,51 @@ public sealed partial class NullLinkPlayerManager : INullLinkPlayerManager, IAch
         else
             _mentors.Remove(player, out _);
     }
+
+    // Blimpuf Start
+    private void SyncBlimpufDiscordRoles(ICommonSession session)
+    {
+        Pipe.RunInBackground(async () =>
+        {
+            DiscordRoleSnapshot? snapshot;
+
+            try
+            {
+                snapshot = await _blimpufDiscordRoles.GetRolesAsync(session.UserId);
+            }
+            catch (Exception ex)
+            {
+                _blimpufDiscordSawmill.Error($"Blimpuf Discord role sync failed for {session.UserId}: {ex}");
+                return;
+            }
+
+            if (snapshot == null)
+            {
+                var url = _blimpufDiscordLink.GetAuthUrl(session.UserId.ToString());
+                if (!string.IsNullOrEmpty(url))
+                    _taskManager.RunOnMainThread(() => OpenDiscordPrompt(session, url));
+
+                return;
+            }
+
+            _taskManager.RunOnMainThread(() =>
+            {
+                var userId = session.UserId.UserId;
+
+                if (!_playerById.TryGetValue(userId, out var playerData)
+                    || playerData.Session != session)
+                    return;
+
+                playerData.Roles = snapshot.Roles.ToImmutableHashSet();
+                playerData.RolesLoaded = true;
+                playerData.DiscordId = snapshot.DiscordId;
+
+                MentorCheck(userId, playerData);
+                AdminCheck(userId, playerData);
+                RebuildTitle(userId, playerData);
+                SendPlayerRoles(playerData.Session, playerData.Roles);
+            });
+        });
+    }
+    // Blimpuf end
 }

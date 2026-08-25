@@ -28,7 +28,7 @@ language-Moffic-name = Moffic
 language-Moffic-description = The language of the Mothpeople borders on complete unintelligibility.
 
 language-Nekomimetic-name = Nekomimetic
-language-Nekomimetic-description = To the casual observer, this language is an incomprehensible mess of broken Japanese. To the felionoid, it's somehow comprehensible.
+language-Nekomimetic-description = To the casual observer, this language is an incomprehensible mess. To the felionoid, it's somehow comprehensible.
 
 language-Draconic-name = Draconic
 language-Draconic-description = The common language of lizard-people, composed of sibilant hisses and rattles.
@@ -49,7 +49,7 @@ language-Scratch-name = Scratch
 language-Scratch-description = A simplified, written dialect of the Avali and Resomi. Scratch is the galactic standard language model for the Illuminate. The origins of this language come from the pre-space age nomadic tribes, whose carvings and etches into ice caves hold a striking similarity to the modern Scratch.
 
 language-Terrum-name = Terrum
-language-Terrum-description = Sounds similar to old-earth Hebrew.
+language-Terrum-description = Sounds similar to old-terran Hebrew.
 
 language-Sylvan-name = Sylvan
 language-Sylvan-description = Plants speaks this language.
@@ -120,3 +120,27 @@ language-Lagomorphian-description = A very lynarxical tongue, developed as an in
 
 language-Cosmic-name = Astral Murmur
 language-Cosmic-description = THE CURTAINS MUST FALL
+
+language-Abductor-name = Abductor
+language-Abductor-description = ...
+
+language-Nexus-name = Nexus
+language-Nexus-description = A neural connection that allows them to communicate with others of their species over a technological network.
+
+language-Changeling-name = Hivemind
+language-Changeling-description = ...
+
+language-Dantalion-name = Thrall
+language-Dantalion-description = ...
+
+language-Empathy-name = Empathy
+language-Empathy-description = ...
+
+language-Carpmind-name = Hivemind
+language-Carpmind-description = Various fishy minds.
+
+language-Xenomind-name = Hivemind
+language-Xenomind-description = Various minds of xenos and terrors.
+
+language-Squeakish-name = Squeakish
+language-Squeakish-description = The language of the Rodentia, made up of a series of chirps and squeaks.

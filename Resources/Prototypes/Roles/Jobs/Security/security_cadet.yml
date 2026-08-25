@@ -14,7 +14,6 @@
   startingGear: SecurityCadetGear
   icon: "JobIconSecurityCadet"
   supervisors: job-supervisors-security
-  canBeAntag: false
   access:
 # - Security # Starlight change
   - Cadet # Starlight change
@@ -47,6 +46,6 @@
     head: ClothingHeadHelmetBasic
     eyes: ClothingEyesHudSecurity
     mask: ClothingMaskGasSecurity
-    neck: ClothingNeckScarfStripedRed
+    neck: ClothingNeckScarfStripedBlue
     belt: ClothingBeltSecurity
     gloves: ClothingHandsGlovesColorBlack

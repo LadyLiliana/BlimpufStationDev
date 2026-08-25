@@ -34,6 +34,8 @@
       map: ["variant-service"]
     - state: variant-command
       map: ["variant-command"]
+    - state: variant-corporate
+      map: ["variant-corporate"]
     - state: variant-multiple
       map: ["variant-multiple"]
     - state: telecom-open
@@ -83,6 +85,10 @@
         whitelist:
           tags:
           - EncryptionCommand
+      variant-corporate:
+        whitelist:
+          tags:
+          - EncryptionCorporate
       variant-multiple:
         whitelist:
           components:
@@ -126,6 +132,9 @@
           True: { shader: unshaded }
           False: { shader: shaded }
         variant-default:
+          True: { shader: unshaded }
+          False: { shader: shaded }
+        variant-corporate:
           True: { shader: unshaded }
           False: { shader: shaded }
         variant-multiple:
@@ -201,11 +210,13 @@
       - EncryptionKeySecurity
       - EncryptionKeyService
       - EncryptionKeyCommand
-      - EncryptionKeyLaw # Starlight
+      - EncryptionKeyCommand # Starlight
+      - EncryptionKeyCorporate # Blimpuf
 
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledCommon
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Common
   components:
   - type: ContainerFill
@@ -216,6 +227,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledCargo
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Cargo
   components:
   - type: ContainerFill
@@ -226,6 +238,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledEngineering
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Engineering
   components:
   - type: ContainerFill
@@ -236,6 +249,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledMedical
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Medical
   components:
   - type: ContainerFill
@@ -246,6 +260,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledScience
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Science
   components:
   - type: ContainerFill
@@ -256,6 +271,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledSecurity
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Security
   components:
   - type: ContainerFill
@@ -266,6 +282,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledService
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Service
   components:
   - type: ContainerFill
@@ -276,6 +293,7 @@
 - type: entity
   parent: TelecomServer
   id: TelecomServerFilledCommand
+  categories: [ ShouldMapStation ] # Starlight
   suffix: Command
   components:
   - type: ContainerFill

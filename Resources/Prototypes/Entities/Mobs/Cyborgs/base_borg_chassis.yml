@@ -6,7 +6,6 @@
   save: false
   abstract: true
   components:
-  - type: TextToSpeech
   - type: Reactive
     groups:
       Acidic: [Touch]
@@ -97,6 +96,8 @@
     - Binary
     - Common
     - Science
+    defaultChannel: Common
+    allowBlacklistedComms: true
   - type: ActiveRadio
     channels:
     - Binary
@@ -289,7 +290,6 @@
   abstract: true
   id: BaseBorgTransponder
   components:
-  - type: TextToSpeech
   - type: BorgTransponder
   - type: DeviceNetwork
     deviceNetId: Wireless
@@ -342,7 +342,6 @@
   parent: [BaseBorgChassis, BaseBorgTransponder]
   abstract: true
   components:
-  - type: TextToSpeech
   - type: RandomMetadata
     nameSegments:
     - NamesBorg
@@ -366,7 +365,6 @@
   parent: BaseBorgChassisNotIonStormable
   abstract: true
   components:
-  - type: TextToSpeech
   - type: NpcFactionMember
     factions:
     - SyndicateSilicon # starlight
@@ -383,6 +381,7 @@
     channels:
     - Binary
     - Syndicate
+    defaultChannel: Syndicate
   - type: ActiveRadio
     channels:
     - Binary
@@ -463,7 +462,7 @@
 # end region starlight
 
 - type: entity
-  parent: BaseBorgChassisNotIonStormable
+  parent: [BaseXenoSiliconLanguages, BaseBorgChassisNotIonStormable] # Starlight, they can understand xeno
   id: BaseXenoborgChassis
   name: xenoborg
   description: A man-machine hybrid that aims to replicate itself. They love extracting brains to insert into fresh Xenoborg chassis to grow their army.
@@ -489,6 +488,7 @@
   - type: IntrinsicRadioTransmitter # can only use binary and xenoborg channel
     channels:
     - Xenoborg
+    defaultChannel: Xenoborg
     # - Binary # Starlight edit: We can't have nice things
   - type: ActiveRadio # but can hear the mothership channel
     channels:

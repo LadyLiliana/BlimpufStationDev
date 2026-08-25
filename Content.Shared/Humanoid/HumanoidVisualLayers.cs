@@ -33,6 +33,10 @@ namespace Content.Shared.Humanoid
         Ensnare,
         Fire,
 
+        FaceCover, // Far Horizons
+        FaceCoverCover, // Far Horizons
+        BodyCover, // Far Horizons
+        BodyCoverCover, // Far Horizons
         Other
     }
 }

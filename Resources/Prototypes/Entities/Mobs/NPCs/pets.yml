@@ -423,6 +423,12 @@
       Male: Dog
       Female: Dog
       Unsexed: Dog
+  - type: UserInterface
+    interfaces:
+      enum.ScentSniffUiKey.Key:
+        type: ScentSniffBoundUserInterface
+  - type: Smeller
+  - type: Scent
   # Starlight-end
   - type: Sprite
     drawdepth: Mobs
@@ -549,6 +555,12 @@
       Female: Dog
       Unsexed: Dog
   - type: Emoting
+  - type: Smeller
+  - type: UserInterface
+    interfaces:
+      enum.ScentSniffUiKey.Key:
+        type: ScentSniffBoundUserInterface
+  - type: Scent
   # Starlight-end
   - type: Sprite
     drawdepth: Mobs
@@ -583,6 +595,8 @@
     spawned:
     - id: FoodMeat
       amount: 3
+    - id: PhenylpiperidineSolidified # Moffstation - Waltuh
+      amount: 1 # Moffstation - Waltuh
   - type: InteractionPopup
     successChance: 0.7
     interactSuccessString: petting-success-dog
@@ -780,6 +794,7 @@
     understands:
     - Mouse
     - GalacticCommon
+    - Squeakish # Rodentia
   # Starlight-end
   - type: Sprite
     drawdepth: SmallMobs
@@ -994,6 +1009,28 @@
     - GalacticCommon
     - Bubblish
   # Starlight-end
+  # Blimpuf - We experimented on Smile so now they're less endangered by water. Go Smile!
+  - type: Reactive
+    groups:
+      Flammable: [ Touch ]
+      Extinguish: [ Touch ]
+    reactions:
+      - reagents: [ Water, SpaceCleaner ]
+        methods: [ Touch ]
+        effects:
+          - !type:WashCreamPie
+      - reagents: [ Water ]
+        methods: [ Touch ]
+        effects:
+          - !type:HealthChange
+            damage:
+              types:
+                Heat: 0.025
+          - !type:PopupMessage
+            type: Local
+            visualType: Large
+            messages: [ "slime-hurt-by-water-popup" ]
+            probability: 0.25
   - type: Sprite
     layers:
     - map: [ "enum.DamageStateVisualLayers.Base" ]
@@ -1040,6 +1077,7 @@
   - type: Damageable
     damageModifierSet: SlimePet
   - type: Bloodstream
+    bloodReagentColor: "#ffffff" # Blimpuf - white until rainbow slime is made
     bloodlossHealDamage:
       types:
         Bloodloss:
@@ -1071,8 +1109,9 @@
 
 - type: entity
   name: Pun Pun
-  parent: MobMonkey
+  parent: MobMonkeyAdvanced # Starlight, he's smarter than the average monkey.
   id: MobMonkeyPunpun
+  suffix: AI
   description: A prominent representative of monkeys with unlimited access to alcohol.
   components:
   # Starlight-start: Languages
@@ -1156,4 +1195,3 @@
       gender: male
   - type: Loadout
     prototypes: [ MobPollyGear ]
-

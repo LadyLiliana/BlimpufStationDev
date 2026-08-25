@@ -1,4 +1,20 @@
 - type: guideEntry
-  id: IPC
-  name: species-name-ipc
-  text: "/ServerInfo/_FarHorizons/Guidebook/Mobs/IPC.xml"
+  id: Neocyte
+  name: species-name-neocyte
+  text: "/ServerInfo/_FarHorizons/Guidebook/Mobs/Neocyte.xml" # Moved to _Starlight due to the number of changes we have to make to them, so we'll maintain them on our own. (We'd pretty much have to <! -- --> comment every single line.)
+  children:
+  - NeocyteFrames # Starlight
+  - TrueNeocyte # Starlight, true Neocyte
+  - NeoArachnid
+  - NeoTNebri # Blimpuf
+  - NeoDiona # Starlight
+  - NeoElf # Starlight
+  - NeoHuman # Starlight
+  - NeoShadekin # Starlight, moved alphabetically
+  - NeoMoth
+  - NeoReptilian # Starlight
+  - NeoResomi
+  - NeoSlimePerson
+  - NeoThaven # Starlight, moved alphabetically
+  - NeoVox
+  - NeoVulp

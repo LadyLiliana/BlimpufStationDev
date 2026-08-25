@@ -1,11 +1,11 @@
 meta:
   format: 7
   category: Grid
-  engineVersion: 266.0.0
+  engineVersion: 277.0.0
   forkId: ""
   forkVersion: ""
-  time: 08/24/2025 19:38:34
-  entityCount: 1258
+  time: 05/22/2026 05:30:13
+  entityCount: 1280
 maps: []
 grids:
 - 1
@@ -254,7 +254,7 @@ entities:
           decals:
             85: 7,14
         - node:
-            color: '#DE3A3A96'
+            color: '#37789B96'
             id: HalfTileOverlayGreyscale270
           decals:
             62: 0,-11
@@ -268,7 +268,7 @@ entities:
           decals:
             95: 13,14
         - node:
-            color: '#DE3A3A96'
+            color: '#37789B96'
             id: HalfTileOverlayGreyscale90
           decals:
             59: 2,-9
@@ -282,7 +282,7 @@ entities:
           decals:
             161: 13,2
         - node:
-            color: '#DE3A3A96'
+            color: '#37789B96'
             id: QuarterTileOverlayGreyscale270
           decals:
             72: 1,-7
@@ -291,7 +291,7 @@ entities:
             75: 1,-10
             82: 1,-11
         - node:
-            color: '#DE3A3A96'
+            color: '#37789B96'
             id: QuarterTileOverlayGreyscale90
           decals:
             68: 1,-10
@@ -320,22 +320,22 @@ entities:
           decals:
             94: 13,15
         - node:
-            color: '#DE3A3AFF'
+            color: '#97DBFFFF'
             id: WarnCornerNE
           decals:
             35: 5,-7
         - node:
-            color: '#DE3A3AFF'
+            color: '#97DBFFFF'
             id: WarnCornerNW
           decals:
             36: 4,-7
         - node:
-            color: '#DE3A3AFF'
+            color: '#97DBFFFF'
             id: WarnCornerSE
           decals:
             37: 5,-8
         - node:
-            color: '#DE3A3AFF'
+            color: '#97DBFFFF'
             id: WarnCornerSW
           decals:
             38: 4,-8
@@ -368,7 +368,7 @@ entities:
             119: 9,-6
             120: 11,-6
         - node:
-            color: '#DE3A3AFF'
+            color: '#97DBFFFF'
             id: WarnLineE
           decals:
             39: -1,-7
@@ -411,7 +411,7 @@ entities:
             9: 8,3
             13: 12,1
         - node:
-            color: '#DE3A3AFF'
+            color: '#97DBFFFF'
             id: WarnLineN
           decals:
             44: 3,-10
@@ -448,6 +448,42 @@ entities:
             30: 1,0
             31: 1,1
             32: 1,1
+        - node:
+            color: '#4795BEFF'
+            id: WarnCornerGreyscale
+          decals:
+            163: 4,-8
+        - node:
+            color: '#4795BEFF'
+            id: WarnCornerGreyscaleNE
+          decals:
+            164: 5,-7
+        - node:
+            color: '#4795BEFF'
+            id: WarnCornerFlippedGreyscale
+          decals:
+            165: 5,-8
+        - node:
+            color: '#4795BEFF'
+            id: WarnCornerGreyscaleNW
+          decals:
+            166: 4,-7
+        - node:
+            color: '#4795BEFF'
+            id: WarnLineGreyscaleE
+          decals:
+            167: -1,-10
+            168: -1,-11
+            169: -1,-9
+            170: -1,-8
+            171: -1,-7
+        - node:
+            color: '#4795BEFF'
+            id: WarningLineGreyscale
+          decals:
+            172: 3,-10
+            173: 4,-10
+            179: 5,-10
     - type: GridAtmosphere
       version: 2
       data:
@@ -581,67 +617,27 @@ entities:
         - volume: 2500
           temperature: 293.15
           moles:
-          - 21.824879
-          - 82.10312
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
+            Oxygen: 21.824879
+            Nitrogen: 82.10312
         - volume: 2500
           immutable: True
-          moles:
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
+          moles: {}
         - volume: 2500
           temperature: 293.1495
           moles:
-          - 20.078888
-          - 75.53487
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
+            Oxygen: 20.078888
+            Nitrogen: 75.53487
         - volume: 2500
           temperature: 293.14975
           moles:
-          - 20.078888
-          - 75.53487
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
-          - 0
+            Oxygen: 20.078888
+            Nitrogen: 75.53487
         chunkSize: 4
     - type: GasTileOverlay
     - type: RadiationGridResistance
     - type: ImplicitRoof
+    - type: NavMap
+    - type: ExplosionAirtightGrid
 - proto: AirlockCentralCommandGlassLocked
   entities:
   - uid: 95
@@ -2973,12 +2969,6 @@ entities:
       rot: -1.5707963267948966 rad
       pos: 17.5,0.5
       parent: 1
-  - uid: 812
-    components:
-    - type: Transform
-      rot: -1.5707963267948966 rad
-      pos: 17.5,1.5
-      parent: 1
   - uid: 813
     components:
     - type: Transform
@@ -3251,18 +3241,8 @@ entities:
         immutable: False
         temperature: 293.1465
         moles:
-        - 1.7459903
-        - 6.568249
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
+          Oxygen: 1.7459903
+          Nitrogen: 6.568249
     - type: ContainerContainer
       containers:
         entity_storage: !type:Container
@@ -3445,6 +3425,16 @@ entities:
     components:
     - type: Transform
       pos: 13.5,3.5
+      parent: 1
+    - type: Fixtures
+      fixtures: {}
+- proto: FuelDispenser
+  entities:
+  - uid: 1277
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: -1.5,9.5
       parent: 1
     - type: Fixtures
       fixtures: {}
@@ -4520,7 +4510,7 @@ entities:
       parent: 1
     - type: AtmosPipeColor
       color: '#FF1212FF'
-- proto: GasVentPump
+- proto: SecureCCGasVentPump
   entities:
   - uid: 483
     components:
@@ -5232,18 +5222,8 @@ entities:
         immutable: False
         temperature: 293.14673
         moles:
-        - 1.7459903
-        - 6.568249
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
+          Oxygen: 1.7459903
+          Nitrogen: 6.568249
     - type: ContainerContainer
       containers:
         entity_storage: !type:Container
@@ -5273,18 +5253,8 @@ entities:
         immutable: False
         temperature: 293.14673
         moles:
-        - 1.7459903
-        - 6.568249
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
+          Oxygen: 1.7459903
+          Nitrogen: 6.568249
 - proto: Gyroscope
   entities:
   - uid: 392
@@ -5587,6 +5557,96 @@ entities:
     - type: Transform
       pos: 13.591483,-0.5105796
       parent: 1
+  - uid: 1259
+    components:
+    - type: Transform
+      pos: 13.301806,-0.46875
+      parent: 1
+  - uid: 1260
+    components:
+    - type: Transform
+      pos: 13.301806,-0.4375
+      parent: 1
+  - uid: 1261
+    components:
+    - type: Transform
+      pos: 13.458056,-0.375
+      parent: 1
+  - uid: 1262
+    components:
+    - type: Transform
+      pos: 13.676806,-0.4375
+      parent: 1
+  - uid: 1263
+    components:
+    - type: Transform
+      pos: 13.676806,-0.53125
+      parent: 1
+  - uid: 1264
+    components:
+    - type: Transform
+      pos: 13.551806,-0.59375
+      parent: 1
+  - uid: 1265
+    components:
+    - type: Transform
+      pos: 13.333056,-0.625
+      parent: 1
+  - uid: 1266
+    components:
+    - type: Transform
+      pos: 13.301806,-0.609375
+      parent: 1
+  - uid: 1267
+    components:
+    - type: Transform
+      pos: 13.301806,-0.46875
+      parent: 1
+  - uid: 1268
+    components:
+    - type: Transform
+      pos: 13.411181,-0.34375
+      parent: 1
+  - uid: 1269
+    components:
+    - type: Transform
+      pos: 13.567431,-0.34375
+      parent: 1
+  - uid: 1270
+    components:
+    - type: Transform
+      pos: 13.645556,-0.4375
+      parent: 1
+  - uid: 1271
+    components:
+    - type: Transform
+      pos: 13.598681,-0.546875
+      parent: 1
+  - uid: 1272
+    components:
+    - type: Transform
+      pos: 13.489306,-0.59375
+      parent: 1
+  - uid: 1273
+    components:
+    - type: Transform
+      pos: 13.411181,-0.578125
+      parent: 1
+  - uid: 1274
+    components:
+    - type: Transform
+      pos: 13.364306,-0.53125
+      parent: 1
+  - uid: 1275
+    components:
+    - type: Transform
+      pos: 13.473681,-0.453125
+      parent: 1
+  - uid: 1276
+    components:
+    - type: Transform
+      pos: 13.536181,-0.390625
+      parent: 1
 - proto: MedicalBed
   entities:
   - uid: 116
@@ -5647,6 +5707,18 @@ entities:
     components:
     - type: Transform
       pos: 11.496431,15.586448
+      parent: 1
+- proto: MedkitRoboticFilled
+  entities:
+  - uid: 1279
+    components:
+    - type: Transform
+      pos: 1.4750524,9.668329
+      parent: 1
+  - uid: 1280
+    components:
+    - type: Transform
+      pos: 1.6156774,9.574579
       parent: 1
 - proto: MicrophoneInstrument
   entities:
@@ -6084,6 +6156,12 @@ entities:
     components:
     - type: Transform
       pos: -0.5,-7.5
+      parent: 1
+  - uid: 1278
+    components:
+    - type: Transform
+      rot: 1.5707963267948966 rad
+      pos: 1.5,9.5
       parent: 1
 - proto: Railing
   entities:
@@ -6752,18 +6830,8 @@ entities:
         immutable: False
         temperature: 293.14673
         moles:
-        - 1.7459903
-        - 6.568249
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
+          Oxygen: 1.7459903
+          Nitrogen: 6.568249
     - type: ContainerContainer
       containers:
         entity_storage: !type:Container
@@ -6786,18 +6854,8 @@ entities:
         immutable: False
         temperature: 293.14673
         moles:
-        - 1.7459903
-        - 6.568249
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
+          Oxygen: 1.7459903
+          Nitrogen: 6.568249
     - type: ContainerContainer
       containers:
         entity_storage: !type:Container
@@ -6820,18 +6878,8 @@ entities:
         immutable: False
         temperature: 293.14673
         moles:
-        - 1.7459903
-        - 6.568249
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
-        - 0
+          Oxygen: 1.7459903
+          Nitrogen: 6.568249
     - type: ContainerContainer
       containers:
         entity_storage: !type:Container
@@ -7209,6 +7257,13 @@ entities:
     components:
     - type: Transform
       pos: 10.5,-5.5
+      parent: 1
+- proto: VendingMachineMedicalBase
+  entities:
+  - uid: 812
+    components:
+    - type: Transform
+      pos: 17.5,1.5
       parent: 1
 - proto: WallShuttle
   entities:

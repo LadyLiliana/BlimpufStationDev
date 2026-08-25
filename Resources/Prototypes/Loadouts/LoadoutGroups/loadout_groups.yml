@@ -151,12 +151,14 @@
   minLimit: 3
   hidden: true
   loadouts:
+  - EmergencyDipsomania # Blimpuf
   - EmergencyNitrogen
   - EmergencyOxygen
   - EmergencyElfOxygen # Starlight
   - LoadoutSpeciesVoxNitrogen
   - EmergencyNonBreather # 🌟Starlight🌟
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheese # Starlight
 
 # nitrogen or oxygen tank, depending on what your species needs
 - type: loadoutGroup
@@ -231,20 +233,6 @@
   loadouts:
   - CaptainOuterClothing
   - CaptainWintercoat
-
-- type: loadoutGroup
-  id: CaptainEyewear
-  name: loadout-group-captain-eyewear
-  loadouts:
-  - CaptainGlasses
-  - CaptainHud
-
-- type: loadoutGroup
-  id: CaptainJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieCaptain
 
 - type: loadoutGroup
   id: HoPHead
@@ -367,6 +355,7 @@
   minLimit: 0
   loadouts:
   - AssistantGloves
+  - AssistantMittens # Starlight
   - GreyGloves #starlight
 
 - type: loadoutGroup
@@ -410,13 +399,6 @@
   - Heels # 🌟Starlight🌟
 
 - type: loadoutGroup
-  id: AssistantJobTrinkets # Starlight - depassenger
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieAssistant # Starlight - depassenger
-
-- type: loadoutGroup
   id: BartenderHead
   name: loadout-group-bartender-head
   minLimit: 0
@@ -452,16 +434,6 @@
   - BartenderGoldenShaker
 
 - type: loadoutGroup
-  id: ServiceWorkerJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieServiceWorker
-  - LizardPlushieBartender # Starlight
-  - LizardPlushieBotanist # Starlight
-  - LizardPlushieChef # Starlight
-
-- type: loadoutGroup
   id: ChefHead
   name: loadout-group-chef-head
   minLimit: 0
@@ -482,6 +454,7 @@
   - ChefJumpsuit
   - ChefJumpskirt
   - MaidOutfit # Starlight
+  - ChefJumpsuitSenior # Starlight
 
 
 - type: loadoutGroup
@@ -492,6 +465,7 @@
   - ChefApron
   - ChefJacket
   - ChefWintercoat
+  - ChefJacketSenior # Starlight
 
 - type: loadoutGroup
   id: ChefJobTrinkets
@@ -508,14 +482,6 @@
   - LibrarianJumpskirt
   - CuratorJumpsuit
   - CuratorJumpskirt
-
-
-- type: loadoutGroup
-  id: LibrarianJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieLibrarian
 
 - type: loadoutGroup
   id: LawyerJumpsuit
@@ -768,12 +734,14 @@
   minLimit: 2
   hidden: true
   loadouts:
+  - EmergencyDipsomaniaClown # Blimpuf
   - EmergencyNitrogenClown
   - EmergencyOxygenClown
   - EmergencyElfOxygenClown # Starlight
   - LoadoutSpeciesVoxNitrogen
   - EmergencyNonBreatherClown # 🌟Starlight🌟
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheeseClown # Starlight
 
 - type: loadoutGroup
   id: ClownJobTrinkets
@@ -837,6 +805,7 @@
   minLimit: 2
   hidden: true
   loadouts:
+  - EmergencyDipsomaniaMime # Blimpuf
   - EmergencyNitrogenMime
   - EmergencyOxygenMime
   - EmergencyElfOxygenMime # Starlight
@@ -844,6 +813,7 @@
   - LoadoutSpeciesVoxNitrogen
   - EmergencyNonBreatherMime # 🌟Starlight🌟
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheeseMime # Starlight
 
 - type: loadoutGroup
   id: MimeJobTrinkets
@@ -976,6 +946,12 @@
   - CargoTechnicianBeretFormal # Starlight
 
 - type: loadoutGroup
+  id: CargoTechnicianEyewear
+  name: loadout-group-cargo-technician-eyewear
+  loadouts:
+    - CargoTechnicianCourierGoggles
+
+- type: loadoutGroup
   id: CargoTechnicianJumpsuit
   name: loadout-group-cargo-technician-jumpsuit
   loadouts:
@@ -986,6 +962,7 @@
   - CargoTechnicianJumpskirtFormal # afterlight end
   - CargoTechnicianOveralls # Starlight
   - CargoTechnicianJumpsuitInformal # DeltaV
+  - CargoTechnicianJumpsuitCourier # Blimpuf
 
 - type: loadoutGroup
   id: CargoTechnicianBackpack
@@ -998,6 +975,7 @@
   - SeniorCourierSatchel
   - SeniorCourierDuffel
   - LeatherSatchel # starlight end
+  - CargoTechnicianAICourierTrunk # Blimpuf
 
 - type: loadoutGroup
   id: CargoTechnicianOuterClothing
@@ -1007,6 +985,7 @@
   - CargoTechnicianWintercoat
   - SeniorCourierWintercoat # Starlight
   - WindbreakerCargo #Starlight
+  - CargoTechnicianCourierCoat # Blimpuf
 
 - type: loadoutGroup
   id: CargoTechnicianShoes
@@ -1021,6 +1000,7 @@
   - LeatherShoes
   - WorkBoots
   - Heels # Starlight end
+  - CargoTechnicianCourierBoots # Blimpuf
 
 - type: loadoutGroup
   id: CargoTechnicianID
@@ -1051,15 +1031,6 @@
   minLimit: 0
   loadouts:
   - SalvageSpecialistWintercoat
-
-- type: loadoutGroup
-  id: SalvageSpecialistJumpsuit
-  name: loadout-group-salvage-specialist-jumpsuit
-  loadouts:
-  - SalvageSpecialistJumpsuit # starlight start
-  - SalvageSpecialistJumpskirt
-  - SalvageSpecialistJumpsuitFormal
-  - SalvageSpecialistJumpskirtFormal # starlight end
 
 - type: loadoutGroup
   id: SalvageSpecialistShoes
@@ -1137,14 +1108,6 @@
   loadouts:
   - YellowJumpsuit
   - YellowJumpskirt
-
-
-- type: loadoutGroup
-  id: TechnicalAssistantJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieTechnicalAssistant
 
 - type: loadoutGroup
   id: StationEngineerHead
@@ -1259,12 +1222,14 @@
   minLimit: 2
   hidden: true
   loadouts:
+  - EmergencyDipsomaniaExtended # Blimpuf
   - EmergencyNitrogenExtended
   - EmergencyOxygenExtended
   - EmergencyElfOxygenExtended # Starlight
   - LoadoutSpeciesVoxNitrogen
   - EmergencyNonBreatherExtended # 🌟Starlight🌟
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheeseExtended # Starlight
 
 # Science
 - type: loadoutGroup
@@ -1414,14 +1379,6 @@
   - WhiteJumpsuit
   - WhiteJumpskirt
 
-
-- type: loadoutGroup
-  id: ResearchAssistantJobTrinkets
-  name: loadout-group-jobtrinkets
-  minLimit: 0
-  loadouts:
-  - LizardPlushieResearchAssistant
-
 # Security
 - type: loadoutGroup
   id: HeadofSecurityHead
@@ -1490,6 +1447,8 @@
   loadouts:
   - WardenJumpsuit
   - WardenJumpskirt
+  - ClothingUniformJumpsuitFormalWarden #starlight
+  - ClothingUniformJumpskirtFormalWarden #starlight
 
 
 - type: loadoutGroup
@@ -1510,83 +1469,6 @@
   - SecStar
 
 - type: loadoutGroup
-  id: SecurityEyewear
-  name: loadout-group-security-eyewear
-  loadouts:
-  - SecurityGlasses
-  - SecurityHud
-  - DetectiveNoirGlasses
-  - SecurityGlassesPrescription # Starlight
-
-- type: loadoutGroup
-  id: BrigmedicHead
-  name: loadout-group-brigmedic-head
-  minLimit: 0
-  loadouts:
-  - BrigmedicBeret
-  - BrigmedicNurseHat # Starlight start
-  - CorpsmanBeret
-  - CorpsmanNurseHat
-  - BrigmedicNurseHatOfLife # Starlight end
-  - SecurityHelmet
-
-- type: loadoutGroup
-  id: BrigmedicJumpsuit
-  name: loadout-group-brigmedic-jumpsuit
-  loadouts:
-  - JumpsuitBrigmedic
-  - JumpskirtBrigmedic # Starlight line swap v
-  - JumpsuitCorpsman # Starlight line swap ^
-  - JumpskirtCorpsman # Starlight start
-  - CorpsmanResponse
-  - CorpsmanTrauma
-  - BrigmedicJumpsuitOfLife
-  - BrigmedicJumpskirtOfLife # starlight end
-
-- type: loadoutGroup
-  id: BrigmedicBackpack
-  name: loadout-group-brigmedic-backpack
-  loadouts:
-  - BrigmedicBackpack
-  - BrigmedicSatchel
-  - BrigmedicDuffel
-  - CorpsmanBackpack # Starlight
-  - CorpsmanSatchel # Starlight
-  - CorpsmanDuffel # Starlight
-  - LeatherSatchel # starlight
-
-- type: loadoutGroup
-  id: BrigmedicOuterClothing
-  name: loadout-group-brigmedic-outerclothing
-  minLimit: 0 # starlight
-  defaultSelected: 1 # starlight
-  loadouts:
-  - BrigmedicCoat
-  - BrigmedicLabCoat # Starlight
-  - CorpsmanCoat #Starlight
-  - CorpsmanLabCoat # Starlight
-  - SecurityOfficerWintercoat
-
-- type: loadoutGroup
-  id: BrigmedicEyewear
-  name: loadout-group-brigmedic-eyewear
-  loadouts:
-  - BrigmedicGlasses
-  - BrigmedicHud
-  - BrigmedicEyePatchHud # Starlight
-  - BrigmeicGlassesPrescription # Starlight
-  - CorpsmanGlasses # Starlight
-  - CorpsmanHud # Starlight
-
-- type: loadoutGroup
-  id: BrigmedicBelt
-  name: loadout-group-brigmedic-belt
-  loadouts:
-  - BrigmedicRig
-  - BrigmedicBelt #Starlight
-  - CorpsmanBelt #Starlight
-
-- type: loadoutGroup
   id: SecurityHead
   name: loadout-group-security-head
   minLimit: 0
@@ -1598,6 +1480,7 @@
   - SecurityBeret
   - SecurityHat
   - TrooperHat
+  - DeputyHat # starlight
 
 - type: loadoutGroup
   id: SecurityJumpsuit
@@ -1612,6 +1495,12 @@
   - TrooperUniform
   - SecurityJumpsuitBlue
   - SecurityJumpskirtBlue # starlight start
+  - FormalOfficerJumpsuit
+  - FormalOfficerJumpskirt
+  - FormalSeniorOfficerJumpsuit
+  - FormalSeniorOfficerJumpskirt
+  - DeputyFormalJumpskirt
+  - DeputyFormalJumpsuit
   - SecurityTshirt # starlight end
 
 - type: loadoutGroup
@@ -1734,12 +1623,14 @@
   minLimit: 2
   hidden: true
   loadouts:
+  - EmergencyDipsomaniaSecurity # Blimpuf
   - EmergencyNitrogenSecurity
   - EmergencyOxygenSecurity
   - EmergencyElfOxygenSecurity # Starlight
   - LoadoutSpeciesVoxNitrogen
   - EmergencyNonbreatherSecurity # 🌟Starlight🌟
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheeseSecurity # Starlight
 
 # Wildcards
 - type: loadoutGroup
@@ -1756,10 +1647,11 @@
   id: ReporterJobTrinkets
   name: loadout-group-jobtrinkets
   minLimit: 0
-  maxLimit: 2 # Starlight
+  maxLimit: 3 # Starlight
   loadouts:
   - LizardPlushieReporter
   - DigiboardMassMedia # Starlight
+  - HoloReporterPin # Starlight
 
 - type: loadoutGroup
   id: PsychologistJumpsuit
@@ -1782,12 +1674,14 @@
   minLimit: 2
   hidden: true
   loadouts:
+  - EmergencyDipsomaniaSyndicate # Blimpuf
   - EmergencyNitrogenSyndicate
   - EmergencyOxygenSyndicate
   - EmergencyElfOxygenSyndicate # Starlight
   - LoadoutSpeciesVoxNitrogen
   - EmergencyNonBreatherSyndicate # 🌟Starlight🌟
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheeseSyndicate # Starlight
 
 - type: loadoutGroup
   id: SurvivalMilitaryDouble
@@ -1795,10 +1689,12 @@
   minLimit: 2
   hidden: true
   loadouts:
+  - EmergencyDipsomaniaMilitaryDouble # Blimpuf
   - EmergencyNitrogenMilitaryDouble
   - EmergencyOxygenMilitaryDouble
   - EmergencyElfOxygenMilitaryDouble # Starlight
   - EmergencyIPC # 🌟Starlight🌟
+  - EmergencyCheeseMilitary # Starlight
 
 - type: loadoutGroup
   id: GroupSpeciesBreathTool

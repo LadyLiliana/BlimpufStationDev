@@ -1,0 +1,75 @@
+# We've rewritten every entry, and we've changed every Neocyte's resistances, so I think that's sufficient reasoning to move the guidebook entries to our files.
+- type: guideEntry
+  id: NeocyteFrames
+  name: guidebook-armor-neocyte
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeocyteFrames.xml"
+
+- type: guideEntry
+  id: TrueNeocyte
+  name: subspecies-name-trueneocyte
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/TrueNeocyte.xml"
+
+- type: guideEntry
+  id: NeoArachnid
+  name: subspecies-name-neoarachnid
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoArachnid.xml"
+
+- type: guideEntry
+  id: NeoTNebri
+  name: subspecies-name-neotnebri
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoTNebri.xml"
+
+- type: guideEntry
+  id: NeoDiona
+  name: subspecies-name-neodiona
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoDiona.xml"
+
+- type: guideEntry
+  id: NeoElf
+  name: subspecies-name-neoelf
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoElf.xml"
+
+- type: guideEntry
+  id: NeoHuman
+  name: subspecies-name-neohuman
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoHuman.xml"
+
+- type: guideEntry
+  id: NeoShadekin
+  name: subspecies-name-neoshadekin
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoShadekin.xml"
+
+- type: guideEntry
+  id: NeoSlimePerson
+  name: subspecies-name-neoslimeperson
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoSlimePerson.xml"
+
+- type: guideEntry
+  id: NeoMoth
+  name: subspecies-name-neomoth
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoMoth.xml"
+
+- type: guideEntry
+  id: NeoReptilian
+  name: subspecies-name-neoreptilian
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoReptilian.xml"
+
+- type: guideEntry
+  id: NeoResomi
+  name: subspecies-name-neoresomi
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoResomi.xml"
+
+- type: guideEntry
+  id: NeoThaven
+  name: subspecies-name-neothaven
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoThaven.xml"
+
+- type: guideEntry
+  id: NeoVox
+  name: subspecies-name-neovox
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoVox.xml"
+
+- type: guideEntry
+  id: NeoVulp
+  name: subspecies-name-neovulp
+  text: "/ServerInfo/_Starlight/Guidebook/Mobs/SubMobs/NeoVulp.xml"

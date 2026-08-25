@@ -37,11 +37,11 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
 
 #region Starlight
-using Content.Shared.Starlight.CCVar;
-using Content.Shared.Starlight.TextToSpeech;
-using Content.Client._Starlight.TTS;
+using Content.Shared._Starlight.CCVar;
 using Content.Shared._Starlight.Traits;
 using Content.Client._Starlight.Lobby.UI;
+using Content.Shared._Starlight.Humanoid;
+using Content.Client._Starlight.Humanoid;
 #endregion Starlight
 
 namespace Content.Client.Lobby.UI
@@ -128,17 +128,6 @@ namespace Content.Client.Lobby.UI
 
         private readonly ISawmill _sawmill;
 
-        #region Starlight
-
-        private List<VoicePrototype> _voices = [];
-
-        private VoiceSelectorWindow _voiceSelectorWindow;
-
-        private List<VoicePrototype> _siliconVoices = [];
-
-        private VoiceSelectorWindow _voiceSiliconSelectorWindow;
-
-        #endregion
 
         // Cosmatic Drift Record System-start
         private readonly RecordEditorGui _recordsTab; // Tracks CD records UI state
@@ -211,6 +200,9 @@ namespace Content.Client.Lobby.UI
             };
 
             Traits.OnTraitsChanged += OnTraitsSelectionChanged; // Starlight
+
+            Antags.OnAntagsChanged += OnAntagsSelectionChanged; // Moffstation
+            Antags.OnLoadoutPressed += OnAntagLoadoutPressed; // Moffstation
 
             #region Left
 
@@ -293,18 +285,26 @@ namespace Content.Client.Lobby.UI
             };
             // Far Horizons end
 
+            // Blimpuf start
+            SpeciesVariantButton.OnItemSelected += args =>
+            {
+                SpeciesVariantButton.SelectId(args.Id);
+                SetSpeciesVariant(_speciesVariants[args.Id]);
+            };
+            // Blimpuf end
+
             //starlight start
             #region Size
             UpdateSizeControls();
 
             WidthSlider.OnValueChanged += args =>
             {
-                SetWidth(args.Value);
+                SetCharacterWidth(args.Value);
             };
 
             HeightSlider.OnValueChanged += args =>
             {
-                SetHeight(args.Value);
+                SetCharacterHeight(args.Value);
             };
 
             WidthResetButton.OnPressed += _ =>
@@ -559,39 +559,6 @@ namespace Content.Client.Lobby.UI
             IsDirty = false;
 
             //🌟Starlight🌟
-            _voices = [.. _prototypeManager
-                .EnumeratePrototypes<VoicePrototype>()
-                .Where(o => !o.Silicon)];
-
-            _voiceSelectorWindow = new(_voices);
-            _voiceSelectorWindow.OnVoiceSelected += voice =>
-            {
-                Profile = Profile?.WithVoice(voice.ID);
-                IsDirty = true;
-            };
-
-            _voiceSelectorWindow.OnPreviewRequested += () =>
-                _entManager.System<TextToSpeechSystem>().RequestPreviewTts(Profile?.Voice ?? "");
-
-            VoiceButton.OnPressed += _ => _voiceSelectorWindow.OpenCentered();
-
-            // 🌟Starlight🌟 start
-            _siliconVoices = [.. _prototypeManager
-                .EnumeratePrototypes<VoicePrototype>()
-                .Where(o => o.Silicon)];
-
-            _voiceSiliconSelectorWindow = new(_siliconVoices);
-            _voiceSiliconSelectorWindow.OnVoiceSelected += voice =>
-            {
-                Profile = Profile?.WithSiliconVoice(voice.ID);
-                IsDirty = true;
-            };
-
-            _voiceSiliconSelectorWindow.OnPreviewRequested
-                += () => _entManager.System<TextToSpeechSystem>().RequestPreviewTts(Profile?.SiliconVoice ?? "");
-
-            SiliconVoiceButton.OnPressed += _ => _voiceSiliconSelectorWindow.OpenCentered();
-
             SetupTabs();
 
             // Cosmatic Drift Record System-start
@@ -600,26 +567,6 @@ namespace Content.Client.Lobby.UI
             SetupInfoEditors();
             RefreshCharacterInfo();
             // 🌟Starlight🌟 end
-        }
-        private void UpdateVoicesControls()
-        {
-            if (Profile is null)
-                return;
-
-            _voiceSelectorWindow.UpdateVoices(_voices, updateVoice: false);
-
-            if (string.IsNullOrEmpty(Profile.Voice))
-            {
-                var available = _voices.ToArray();
-                if (available.Length > 0)
-                {
-                    var index = new Random().Next(0, available.Length);
-                    Profile.Voice = available[index].ID;
-                }
-            }
-            var voiceChoice = _voices.FirstOrDefault(x => x.ID == Profile.Voice);
-            if (voiceChoice != default)
-                _voiceSelectorWindow.SelectVoice(voiceChoice);
         }
         // 🌟Starlight🌟 Start
 
@@ -650,29 +597,6 @@ namespace Content.Client.Lobby.UI
             return recordEditor;
         }
         // Cosmatic Drift Record System-end
-
-        private void UpdateSiliconVoicesControls()
-        {
-            if (Profile is null)
-                return;
-
-            _voiceSiliconSelectorWindow.UpdateVoices(_siliconVoices, updateVoice: false);
-
-            if (string.IsNullOrEmpty(Profile.SiliconVoice))
-            {
-                var available = _siliconVoices.ToArray();
-                if (available.Length > 0)
-                {
-                    var index = new Random().Next(0, available.Length);
-                    Profile.SiliconVoice = available[index].ID;
-                }
-            }
-
-            var siliconVoiceChoice = _siliconVoices.FirstOrDefault(x => x.ID == Profile.SiliconVoice);
-            if (siliconVoiceChoice != default)
-                _voiceSiliconSelectorWindow.SelectVoice(siliconVoiceChoice);
-        }
-
 
         private void SetupInfoEditors()
         {
@@ -715,9 +639,14 @@ namespace Content.Client.Lobby.UI
             if (Profile is null)
                 return;
 
-            // Remove all existing traits - iterate directly over readonly collection
+            // Keep traits managed outside the trait selector, such as species variants
             foreach (var existingTrait in Profile.TraitPreferences)
             {
+                if (_prototypeManager.TryIndex(existingTrait, out TraitPrototype? trait) &&
+                    _prototypeManager.TryIndex(trait.Category, out TraitCategoryPrototype? category) &&
+                    category.Hidden)
+                    continue;
+
                 Profile = Profile.WithoutTraitPreference(existingTrait, _prototypeManager);
             }
 
@@ -910,9 +839,12 @@ namespace Content.Client.Lobby.UI
             }
         }
 
+        #region Starlight
         public void RefreshAntags()
         {
-            AntagList.RemoveAllChildren();
+            var renderedAntags = Antags.RefreshAntags(Profile); // Starlight
+            UpdateAntagPreferences(renderedAntags); // Starlight
+            /*AntagList.RemoveAllChildren();
             var items = new[]
             {
                 ("humanoid-profile-editor-antag-preference-yes-button", 0),
@@ -1018,8 +950,64 @@ namespace Content.Client.Lobby.UI
                 // Starlight ENd
 
                 AntagList.AddChild(antagContainer);
-            }
+            }*/
         }
+        private void OnAntagsSelectionChanged(HashSet<ProtoId<AntagPrototype>> antags)
+        {
+            if (UpdateAntagPreferences(antags))
+                ReloadPreview();
+        }
+
+        private bool UpdateAntagPreferences(IEnumerable<ProtoId<AntagPrototype>> antags)
+        {
+            if (Profile is null)
+                return false;
+
+            var selectedAntags = antags.ToHashSet();
+
+            if (selectedAntags.SetEquals(Profile.AntagPreferences))
+                return false;
+
+            Profile = Profile.WithAntagPreferences(selectedAntags);
+            SetDirty();
+            return true;
+        }
+
+        private void OnAntagLoadoutPressed(ProtoId<AntagPrototype> antagId)
+        {
+            if (Profile is null ||
+                !_prototypeManager.TryIndex<AntagPrototype>(antagId, out var antag))
+            {
+                return;
+            }
+
+            var antagLoadoutId = antag.RoleLoadout?.FirstOrDefault();
+
+            if (antagLoadoutId == null ||
+                !_prototypeManager.TryIndex<RoleLoadoutPrototype>(
+                    antagLoadoutId.Value,
+                    out var roleLoadoutProto))
+            {
+                return;
+            }
+
+            RoleLoadout? loadout = null;
+            Profile.Loadouts.TryGetValue(roleLoadoutProto.ID, out loadout);
+            loadout = loadout?.Clone();
+
+            if (loadout == null)
+            {
+                loadout = new RoleLoadout(roleLoadoutProto.ID);
+                loadout.SetDefault(
+                    Profile,
+                    _playerManager.LocalSession,
+                    _prototypeManager,
+                    force: true);
+            }
+
+            OpenAntagLoadout(antag, loadout, roleLoadoutProto);
+        }
+        #endregion
 
         private void SetDirty()
         {
@@ -1076,6 +1064,7 @@ namespace Content.Client.Lobby.UI
 
             UpdateNameEdit();
             UpdateSubspecies(); // Far Horizons
+            UpdateSpeciesVariant(); // Blimpuf
             UpdateCustomSpecieNameEdit(); // Starlight
             UpdateCharacterInfoEditorText(); //Starlight
             UpdateSexControls();
@@ -1090,8 +1079,6 @@ namespace Content.Client.Lobby.UI
             UpdateHairPickers();
             UpdateCMarkingsHair();
             UpdateCMarkingsFacialHair();
-            UpdateVoicesControls();
-            UpdateSiliconVoicesControls(); // 🌟Starlight🌟
             UpdateCybernetics(); // Starlight
             UpdateSpeciesLoadout(); // Far Horizons
 
@@ -1271,7 +1258,7 @@ namespace Content.Client.Lobby.UI
                     }
                     description.AddMessage(!reason.IsEmpty ? reason : FormattedMessage.FromMarkupPermissive(Loc.GetString("job-no-requirements")));
 
-                    selector.Setup(items, job.LocalizedName, 200, description, icon, job.Guides);
+                    selector.Setup(items, job.LocalizedJobSelectName, 200, description, icon, job.Guides);
 
                     if (!allowed)
                     {
@@ -1609,8 +1596,6 @@ namespace Content.Client.Lobby.UI
             UpdateGenderControls();
             Markings.SetSex(newSex);
             ReloadPreview();
-            UpdateVoicesControls();
-            UpdateSiliconVoicesControls(); // 🌟Starlight🌟
         }
 
         private void SetGender(Gender newGender)
@@ -1633,20 +1618,20 @@ namespace Content.Client.Lobby.UI
             }
         }
 
-        private void SetWidth(float newWidth)
+        private void SetCharacterWidth(float newWidth)
         {
             if (Profile is null) return;
-            Profile.Appearance = Profile.Appearance.WithWidth(newWidth);
+            Profile = Profile.WithCharacterAppearance(Profile.Appearance.WithWidth(newWidth));
             UpdateSizeText();
-            ReloadPreview();
+            ReloadProfilePreview();
         }
 
-        private void SetHeight(float newHeight)
+        private void SetCharacterHeight(float newHeight)
         {
             if (Profile is null) return;
-            Profile.Appearance = Profile.Appearance.WithHeight(newHeight);
+            Profile = Profile.WithCharacterAppearance(Profile.Appearance.WithHeight(newHeight));
             UpdateSizeText();
-            ReloadPreview();
+            ReloadProfilePreview();
         }
         //starlight end
 
@@ -1654,10 +1639,13 @@ namespace Content.Client.Lobby.UI
         {
             Profile = Profile?.WithSpecies(newSpecies);
             UpdateSubspecies(); // Far Horizons
+            UpdateSpeciesVariant(); // Blimpuf
+            Traits.UpdateRequirements(Profile);
             OnSkinColorOnValueChanged(); // Species may have special color prefs, make sure to update it.
             Markings.SetSpecies(newSpecies); // Repopulate the markings tab as well.
             // In case there's job restrictions for the species
             RefreshJobs();
+            RefreshAntags(); // Starlight
             // In case there's species restrictions for loadouts
             RefreshLoadouts();
             UpdateSexControls(); // update sex for new species
@@ -2114,4 +2102,3 @@ namespace Content.Client.Lobby.UI
         }
     }
 }
-

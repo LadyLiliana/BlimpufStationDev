@@ -1,6 +1,6 @@
 ﻿using Robust.Shared.Prototypes;
 
-namespace Content.Shared.Starlight.Economy;
+namespace Content.Shared._Starlight.Economy;
 
 [Prototype("SalaryRoleBonus")]
 public sealed partial class SalaryRoleBonusPrototype : IPrototype
@@ -13,5 +13,5 @@ public sealed partial class SalaryRoleBonusPrototype : IPrototype
     public ulong[] Roles { get; set; } = [];
 
     [DataField(required: true)]
-    public float Multiplayer;
+    public float Multiplier;
 }

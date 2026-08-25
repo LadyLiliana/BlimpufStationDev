@@ -23,6 +23,9 @@ namespace Content.Client.Launcher
         private readonly LauncherConnecting _state;
         private float _waitTime;
         private string? _discord; //NullLink
+        private string? _helpUrl; // Starlight
+        private string? _applyDiscordUrl; // Blimpuf
+        private string? _applyWebsiteUrl; // Blimpuf
 
         // Pressing reconnect will redial instead of simply reconnecting.
         private bool _redial;
@@ -53,6 +56,10 @@ namespace Content.Client.Launcher
 
             CopyButton.OnPressed += CopyButtonPressed;
             CopyButtonDisconnected.OnPressed += CopyButtonDisconnectedPressed;
+            LinkDiscordButton.OnPressed += OpenDiscordPressed; // NullLink
+            JoinDiscordButton.OnPressed += OpenApplyDiscordPressed; // Blimpuf
+            WebsiteButton.OnPressed += OpenWebsitePressed; // Blimpuf
+            OpenUrlButton.OnPressed += OpenUrlPressed; // Starlight
             ExitButton.OnPressed += _ => _state.Exit();
 
             var addr = state.Address;
@@ -103,6 +110,34 @@ namespace Content.Client.Launcher
             }
         }
 
+        // Starlight start
+        private void OpenUrlPressed(BaseButton.ButtonEventArgs args)
+        {
+            if (_helpUrl is { } url)
+                IoCManager.Resolve<IUriOpener>().OpenUri(url);
+        }
+        // Starlight end
+
+        // Blimpuf start
+        private void OpenDiscordPressed(BaseButton.ButtonEventArgs args)
+        {
+            if (_discord is { } url)
+                IoCManager.Resolve<IUriOpener>().OpenUri(url);
+        }
+
+        private void OpenApplyDiscordPressed(BaseButton.ButtonEventArgs args)
+        {
+            if (_applyDiscordUrl is { } url)
+                IoCManager.Resolve<IUriOpener>().OpenUri(url);
+        }
+
+        private void OpenWebsitePressed(BaseButton.ButtonEventArgs args)
+        {
+            if (_applyWebsiteUrl is { } url)
+                IoCManager.Resolve<IUriOpener>().OpenUri(url);
+        }
+        // Blimpuf end
+
         private void ConnectFailReasonChanged(string? reason)
         {
             ConnectFailReason.SetMessage(reason == null
@@ -117,6 +152,15 @@ namespace Content.Client.Launcher
 
         private void HandleDisconnectReason(INetStructuredReason? reason)
         {
+            _discord = null;
+            LinkDiscordButton.Visible = false;
+            _applyDiscordUrl = null;
+            JoinDiscordButton.Visible = false;
+            _applyWebsiteUrl = null;
+            WebsiteButton.Visible = false;
+            _helpUrl = null;
+            OpenUrlButton.Visible = false;
+
             if (reason == null)
             {
                 _waitTime = 0;
@@ -130,9 +174,21 @@ namespace Content.Client.Launcher
                 {
                     _discord = link;
                     LinkDiscordButton.Visible = true;
-                    LinkDiscordButton.OnPressed += _ => IoCManager.Resolve<IUriOpener>().OpenUri(link);
                 }
                 //NullLink end
+
+                // Blimpuf start
+                _applyDiscordUrl = reason.Message.StringOf("applyDiscord");
+                JoinDiscordButton.Visible = !string.IsNullOrEmpty(_applyDiscordUrl);
+
+                _applyWebsiteUrl = reason.Message.StringOf("applyWebsite");
+                WebsiteButton.Visible = !string.IsNullOrEmpty(_applyWebsiteUrl);
+                // Blimpuf end
+
+                // Starlight start
+                _helpUrl = reason.Message.StringOf("url");
+                OpenUrlButton.Visible = !string.IsNullOrEmpty(_helpUrl);
+                // Starlight end
 
                 if (reason.Message.Int32Of("delay") is { } delay)
                 {

@@ -26,14 +26,14 @@
       undergarmentBottom: UndergarmentBottomBoxersAvali
 
 - type: entity
-  parent: [BaseSpeciesDummy, BaseInventoryCyclorite]
-  id: AppearanceCyclorite
+  parent: [BaseSpeciesDummy, BaseInventoryTNebri]
+  id: AppearanceTNebri
   categories: [ HideSpawnMenu ]
   components:
   - type: HumanoidAppearance
-    species: Cyclorite
+    species: TNebri
   - type: Body
-    prototype: Cyclorite
+    prototype: TNebri
 
 - type: entity
   parent: [BaseSpeciesDummy, BaseInventoryDiona]
@@ -45,13 +45,11 @@
 
 - type: entity
   parent: [BaseSpeciesDummy, BaseInventoryFemaleJumpsuit]
-  id: AppearanceDwarf
-  categories: [ HideSpawnMenu ]
-
-- type: entity
-  parent: [BaseSpeciesDummy, BaseInventoryFemaleJumpsuit]
   id: AppearanceElf
   categories: [ HideSpawnMenu ]
+  components:
+  - type: HumanoidAppearance
+    species: Elf
 
 - type: entity
   parent: [BaseSpeciesDummy, BaseInventoryFelionoid]
@@ -166,6 +164,8 @@
   id: AppearanceThaven
   categories: [ HideSpawnMenu ]
   components:
+  - type: HumanoidAppearance
+    species: Thaven
   - type: Sprite
     scale: 1, 1
 
@@ -191,6 +191,9 @@
   parent: BaseSpeciesDummy
   id: AppearanceIPC
   categories: [ HideSpawnMenu ]
+  components:
+  - type: HumanoidAppearance
+    species: IPC
 
 - type: entity
   parent: [BaseSpeciesDummy, BaseInventoryVulpkanin]
@@ -203,3 +206,31 @@
     - Snout
     - HeadTop
     - HeadSide
+
+- type: entity
+  save: false
+  parent: [BaseSpeciesDummy, BaseInventoryRodentia]
+  id: AppearanceRodentia
+  categories: [ HideSpawnMenu ]
+  description: A dummy rodentia meant to be used in character setup.
+  components:
+  - type: HumanoidAppearance
+    species: Rodentia
+    undergarmentTop: UndergarmentTopTanktopRodentia
+    undergarmentBottom: UndergarmentBottomBoxersRodentia
+    hideLayersOnEquip:
+    - Hair
+    - HeadTop
+    - HeadSide
+    - Snout
+    markingsDisplacement:
+      Hair:
+        sizeMaps:
+          32:
+            sprite: _Starlight/Mobs/Species/Rodentia/displacement.rsi
+            state: hair
+      FacialHair:
+        sizeMaps:
+          32:
+            sprite: _Starlight/Mobs/Species/Rodentia/displacement.rsi
+            state: facialhair

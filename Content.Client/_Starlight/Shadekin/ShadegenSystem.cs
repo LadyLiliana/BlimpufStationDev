@@ -1,14 +1,14 @@
-using Content.Shared._Starlight.Shadekin;
+using Content.Shared._Starlight.Shadekin.Components;
 using Robust.Client.GameObjects;
 using Robust.Shared.Map;
 
 namespace Content.Client._Starlight.Shadekin;
 
-public sealed class ShadegenSystem : EntitySystem
+public sealed partial class ShadegenSystem : EntitySystem
 {
-    [Dependency] private readonly PointLightSystem _lightSys = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly ContainerSystem _container = default!;
+    [Dependency] private PointLightSystem _lightSys = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private ContainerSystem _container = default!;
 
     private readonly HashSet<EntityUid> _updateQueue = new();
 
@@ -43,7 +43,7 @@ public sealed class ShadegenSystem : EntitySystem
             var lightQuery = _lookup.GetEntitiesInRange<PointLightComponent>(Transform(uid).Coordinates, shadegen.Range);
             foreach (var light in lightQuery)
             {
-                if (light.Comp.ContainerOccluded || HasComp<DarkLightComponent>(light))
+                if (light.Comp.ContainerOccluded)
                     continue;
 
                 _lightSys.SetContainerOccluded(light.Owner, true, light.Comp);

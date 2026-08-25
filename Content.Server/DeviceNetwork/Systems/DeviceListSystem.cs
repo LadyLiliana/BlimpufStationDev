@@ -8,9 +8,9 @@ using Robust.Shared.Map.Events;
 namespace Content.Server.DeviceNetwork.Systems;
 
 [UsedImplicitly]
-public sealed class DeviceListSystem : SharedDeviceListSystem
+public sealed partial class DeviceListSystem : SharedDeviceListSystem
 {
-    [Dependency] private readonly NetworkConfiguratorSystem _configurator = default!;
+    [Dependency] private NetworkConfiguratorSystem _configurator = default!;
 
     public override void Initialize()
     {
@@ -115,7 +115,7 @@ public sealed class DeviceListSystem : SharedDeviceListSystem
     public void OnDeviceShutdown(Entity<DeviceListComponent?> list, Entity<DeviceNetworkComponent> device)
     {
         device.Comp.DeviceLists.Remove(list.Owner);
-        if (!Resolve(list.Owner, ref list.Comp))
+        if (!TryComp(list.Owner, out list.Comp))
             return;
 
         list.Comp.Devices.Remove(device);

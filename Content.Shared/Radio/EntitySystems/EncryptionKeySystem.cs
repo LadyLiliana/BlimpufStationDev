@@ -26,13 +26,13 @@ namespace Content.Shared.Radio.EntitySystems;
 /// </summary>
 public sealed partial class EncryptionKeySystem : EntitySystem
 {
-    [Dependency] private readonly IPrototypeManager _protoManager = default!;
-    [Dependency] private readonly SharedToolSystem _tool = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedContainerSystem _container = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedHandsSystem _hands = default!;
-    [Dependency] private readonly SharedWiresSystem _wires = default!;
+    [Dependency] private IPrototypeManager _protoManager = default!;
+    [Dependency] private SharedToolSystem _tool = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedContainerSystem _container = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private SharedWiresSystem _wires = default!;
 
     public override void Initialize()
     {
@@ -214,7 +214,7 @@ public sealed partial class EncryptionKeySystem : EntitySystem
                     component.DefaultChannel,
                     args,
                     _protoManager,
-                    "examine-encryption-channel");
+                    "examine-encryption-channel", HasComp<IntercomComponent>(uid));
                 //Starlight end
             }
         }
@@ -232,7 +232,7 @@ public sealed partial class EncryptionKeySystem : EntitySystem
             {
                 args.PushMarkup(Loc.GetString("examine-encryption-channels-prefix"));
                 AddChannelsExamine(component.Channels, component.CustomChannels, component.DefaultChannel, args, _protoManager,
-                    "examine-encryption-channel");
+                    "examine-encryption-channel", false);
             }
             //Starlight end
         }
@@ -244,7 +244,7 @@ public sealed partial class EncryptionKeySystem : EntitySystem
     /// <param name="channels">HashSet of channels in headset, encryptionkey or etc.</param>
     /// <param name="protoManager">IPrototypeManager for getting prototypes of channels with their variables.</param>
     /// <param name="channelFTLPattern">String that provide id of pattern in .ftl files to format channel with variables of it.</param>
-    public void AddChannelsExamine(HashSet<ProtoId<RadioChannelPrototype>> channels, HashSet<CustomRadioChannelData> customChannels, string? defaultChannel, ExaminedEvent examineEvent, IPrototypeManager protoManager, string channelFTLPattern) // Starlight edit
+    public void AddChannelsExamine(HashSet<ProtoId<RadioChannelPrototype>> channels, HashSet<CustomRadioChannelData> customChannels, string? defaultChannel, ExaminedEvent examineEvent, IPrototypeManager protoManager, string channelFTLPattern, bool isIntercom) // Starlight edit
     {
         RadioChannelPrototype? proto;
         foreach (var id in channels)
@@ -255,7 +255,8 @@ public sealed partial class EncryptionKeySystem : EntitySystem
                 ? SharedChatSystem.RadioCommonPrefix.ToString()
                 : $"{SharedChatSystem.RadioChannelPrefix}{proto.KeyCode}";
 
-            examineEvent.PushMarkup(Loc.GetString(channelFTLPattern,
+            // Change things here for intercom
+            examineEvent.PushMarkup(Loc.GetString((!proto.HeadsetTransmittable && !isIntercom) ? "examine-encryption-readonly-channel" : channelFTLPattern, // remove common radio
                 ("color", proto.Color),
                 ("key", key),
                 ("id", proto.LocalizedName),
